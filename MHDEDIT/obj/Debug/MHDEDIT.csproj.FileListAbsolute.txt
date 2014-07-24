@@ -45,3 +45,6 @@ C:\Users\Christoph\Documents\Visual Studio 2013\Projects\MHD\MHDEDIT\obj\Debug\M
 C:\Users\Christoph\Documents\Visual Studio 2013\Projects\MHD\MHDEDIT\obj\Debug\MHDEDIT.Properties.Resources.resources
 C:\Users\Christoph\Documents\Visual Studio 2013\Projects\MHD\MHDEDIT\obj\Debug\MHDEDIT.csproj.GenerateResource.Cache
 C:\Users\Christoph\Documents\Visual Studio 2013\Projects\MHD\MHDEDIT\bin\Debug\EmptyLevel.xml
+C:\Users\Christoph\Documents\GitHub\MHD\MHDEDIT\bin\Debug\MHDEDIT.exe.config
+C:\Users\Christoph\Documents\GitHub\MHD\MHDEDIT\obj\Debug\MHDEDIT.exe
+C:\Users\Christoph\Documents\GitHub\MHD\MHDEDIT\obj\Debug\MHDEDIT.pdb
