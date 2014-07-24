@@ -1,6 +1,7 @@
 ﻿#region Using statements
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,8 @@ using System.IO;
 using System.Reflection;
 using System.Linq.Expressions;
 using System.Diagnostics;
+using SharpDX;
+using SharpDX.Direct2D1;
 
 #endregion
 
@@ -20,6 +23,11 @@ namespace MHD.Content.Level
 
     public class Converter
     {
+
+        public static T CastDirect<T>(object input)
+        {
+            return (T)input;
+        }
 
         public static void DataToXML(Root root, string filename)
         {
@@ -39,10 +47,13 @@ namespace MHD.Content.Level
                 if (rootInfo != null)
                 {
                     if (objType.Equals(typeof(Player))) { node = new TreeNode(objType.Name, 4, 4); }
-                    else if (objType.Equals(typeof(List<Object>)))
+                    else if (objType.IsGenericType && objType.GetGenericTypeDefinition() == typeof(List<>))
                     {
-                        node = new TreeNode("Objects", 0, 1);
-                        foreach (Object obj2 in (List<Object>)obj)
+                        Type itemType = objType.GetGenericArguments()[0];
+                        Type constructedListType = typeof(List<>).MakeGenericType(itemType);
+                        IList listInstance = (IList)Activator.CreateInstance(constructedListType, new object[] { obj });
+                        node = new TreeNode(((FieldInfo)rootInfo).Name, 0, 1);
+                        foreach (object obj2 in listInstance)
                         {
                             node.Nodes.Add(DataToNode(obj2, true));
                         }
@@ -65,6 +76,7 @@ namespace MHD.Content.Level
                 int imageIndex = 7;
                 if (text.EndsWith(".cs")) imageIndex = 9;
                 TreeNode valueNode = new TreeNode(text, imageIndex, imageIndex);
+                if(node.Text != "UID") valueNode.Tag = true;
                 node.Nodes.Add(valueNode);
             }
             return node;
@@ -74,11 +86,12 @@ namespace MHD.Content.Level
         {
             if (data == null) data = new Root();
             Type dataType = data.GetType();
-            if (data.GetType().Equals(typeof(List<Object>)))
+            if (dataType.IsGenericType && dataType.GetGenericTypeDefinition() == typeof(List<>))
             {
+                Type itemType = dataType.GetGenericArguments()[0];
                 foreach (TreeNode node in nodes)
                 {
-                    ((List<Object>)data).Add((Object)NodeToData(node.Nodes, new Object()));
+                    ((IList)data).Add(NodeToData(node.Nodes, Activator.CreateInstance(itemType)));
                 }
                 return data;
             }
@@ -197,6 +210,12 @@ namespace MHD.Content.Level
         public StartPosition StartPosition = new StartPosition();
         public float StartRotation = 0;
         public string Script = "script.cs";
+        public Geometry Geometry = new Geometry();
+    }
+
+    public class Geometry
+    {
+        public List<System.Drawing.Point> Points = new List<System.Drawing.Point>();
     }
 
     #endregion

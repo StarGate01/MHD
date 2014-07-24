@@ -39,7 +39,7 @@ namespace MHDEDIT
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            dataManager.data = MHD.Content.Level.Converter.XMLToData("EmptyLevel.xml");
+            dataManager.data = new MHD.Content.Level.Root();
             dataManager.Refresh();
             treeViewOverview.ExpandAll();
             treeViewOverview.Nodes[0].Nodes[0].Collapse();
@@ -172,9 +172,7 @@ namespace MHDEDIT
             if (treeViewOverview.SelectedNode != null && treeViewOverview.SelectedNode.Parent != null)
             {
                 editToolStripMenuItem.Enabled = removeToolStripMenuItem.Enabled = (treeViewOverview.SelectedNode.Parent.Text == "Objects");
-                if (treeViewOverview.SelectedNode.GetNodeCount(true) == 0 &&
-                    treeViewOverview.SelectedNode.Parent.Text != "UID" &&
-                    treeViewOverview.SelectedNode.Text != "Objects")
+                if (treeViewOverview.SelectedNode.Tag != null)
                 {
                     treeViewOverview.LabelEdit = true;
                     treeViewOverview.SelectedNode.BeginEdit();
