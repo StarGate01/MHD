@@ -68,9 +68,9 @@ namespace MHD.Gameplay.Objects
 
         public override void Update(TimeSpan totalGameTime, TimeSpan timeSinceLastFrame, Input.InputProvider inputProvider, Matrix3x2 worldTransform, Matrix3x2 viewTransform)
         {
-            float accel = 0.003f;
-            float breakAccel = 0.0015f;
-            float maxVel = 0.3f;
+            float accel = 0.004f;
+            float breakAccel = 0.002f;
+            float maxVel = 0.4f;
             float moveAmount = 0;
             if (inputProvider.KeyboardState.IsPressed(Key.W) && velocity < maxVel) velocity += accel * (float)timeSinceLastFrame.TotalMilliseconds;
             if (inputProvider.KeyboardState.IsPressed(Key.S) && velocity > -maxVel) velocity -= accel * (float)timeSinceLastFrame.TotalMilliseconds;
@@ -86,9 +86,9 @@ namespace MHD.Gameplay.Objects
             }
             moveAmount = velocity * (float)timeSinceLastFrame.TotalMilliseconds;
 
-            float accelTurn = 0.00005f;
-            float breakAccelTurn = 0.000025f;
-            float maxVelTurn = 0.005f;
+            float accelTurn = 0.00004f;
+            float breakAccelTurn = 0.00002f;
+            float maxVelTurn = 0.004f;
             float turnAmount = 0;
             if (inputProvider.KeyboardState.IsPressed(Key.D) && turningVelocity < maxVelTurn) turningVelocity += accelTurn * (float)timeSinceLastFrame.TotalMilliseconds;
             if (inputProvider.KeyboardState.IsPressed(Key.A) && turningVelocity > -maxVelTurn) turningVelocity -= accelTurn * (float)timeSinceLastFrame.TotalMilliseconds;

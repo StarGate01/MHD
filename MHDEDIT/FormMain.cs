@@ -32,9 +32,9 @@ namespace MHDEDIT
         private void FormMain_Load(object sender, EventArgs e)
         {
             SaveLoad.Load(ref treeViewOverview, "EmptyLevel.xml");
-            treeViewOverview.Nodes.Find("placeholder", true).ToList().ForEach(f => f.Remove());
             treeViewOverview.Nodes[0].Nodes[0].Collapse();
             treeViewOverview.Nodes[0].Nodes[1].Collapse();
+            treeViewOverview.Nodes[0].Nodes[2].Collapse();
             treeViewOverview.Nodes[0].EnsureVisible();
         }
 
@@ -119,6 +119,8 @@ namespace MHDEDIT
                 tNode.Nodes.Add(new TreeNode("UID", 3, 3, new TreeNode[] { new TreeNode(Guid.NewGuid().ToString(), 7, 7) }));
                 treeViewOverview.SelectedNode.Nodes.Add(tNode);
                 tNode.ExpandAll();
+                tNode.EnsureVisible();
+                treeViewOverview.SelectedNode = tNode;
             }
         }
 

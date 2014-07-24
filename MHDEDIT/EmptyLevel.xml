@@ -47,5 +47,27 @@
       100
     </StartEnergy>
   </Player>
-  <Objects>placeholder</Objects>
+  <Objects>
+    <Object>
+      <UID>
+        none
+      </UID>
+      <Data>
+        <Position>
+          <X>
+            0
+          </X>
+          <Y>
+            0
+          </Y>
+        </Position>
+        <Rotation>
+          0
+        </Rotation>
+      </Data>
+      <Script>
+        none.cs
+      </Script>
+    </Object>
+  </Objects>
 </Level>

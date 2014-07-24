@@ -38,8 +38,7 @@ namespace MHDEDIT
                 }
                 else
                 {
-                    if (node.Name == "Objects") sr.WriteLine("<Objects>empty</Objects>");
-                    else sr.WriteLine(System.Net.WebUtility.UrlEncode(node.Text));
+                    sr.WriteLine(System.Net.WebUtility.UrlEncode(node.Text));
                 }
             }
         }
@@ -76,18 +75,19 @@ namespace MHDEDIT
                     if (xNode.Name == ("Player")) { tNode.ImageIndex = 4; tNode.SelectedImageIndex = 4; }
                     if (xNode.Name == ("Objective")) { tNode.ImageIndex = 5; tNode.SelectedImageIndex = 5; }
                     if (xNode.Name == ("Objects")) { tNode.ImageIndex = 0; tNode.SelectedImageIndex = 1; }
+                    tNode.Name = tNode.Text.Replace('.', '_');
                     addTreeNode(xNode, tNode);
                 }
             }
             else
             {
                 treeNode.Text = xmlNode.OuterXml.Trim();
-                if (treeNode.Text == "placeholder") treeNode.Name = treeNode.Text;
                 treeNode.ImageIndex = 7;
                 treeNode.SelectedImageIndex = 7;
+                if (treeNode.Text.EndsWith(".cs")) { treeNode.ImageIndex = 9; treeNode.SelectedImageIndex = 9; }
             }
-        }
 
+        }
     }
 
 }

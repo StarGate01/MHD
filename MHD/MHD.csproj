@@ -60,22 +60,22 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="SharpDX">
-      <HintPath>..\..\..\..\..\Downloads\SharpDX\Bin\DirectX11-net40\SharpDX.dll</HintPath>
+      <HintPath>..\..\..\..\Downloads\SharpDX\Bin\DirectX11-net40\SharpDX.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.D3DCompiler">
-      <HintPath>..\..\..\..\..\Downloads\SharpDX\Bin\DirectX11-net40\SharpDX.D3DCompiler.dll</HintPath>
+      <HintPath>..\..\..\..\Downloads\SharpDX\Bin\DirectX11-net40\SharpDX.D3DCompiler.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Direct2D1">
-      <HintPath>..\..\..\..\..\Downloads\SharpDX\Bin\DirectX11-net40\SharpDX.Direct2D1.dll</HintPath>
+      <HintPath>..\..\..\..\Downloads\SharpDX\Bin\DirectX11-net40\SharpDX.Direct2D1.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Direct3D11">
-      <HintPath>..\..\..\..\..\Downloads\SharpDX\Bin\DirectX11-net40\SharpDX.Direct3D11.dll</HintPath>
+      <HintPath>..\..\..\..\Downloads\SharpDX\Bin\DirectX11-net40\SharpDX.Direct3D11.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.DirectInput">
-      <HintPath>..\..\..\..\..\Downloads\SharpDX\Bin\DirectX11-net40\SharpDX.DirectInput.dll</HintPath>
+      <HintPath>..\..\..\..\Downloads\SharpDX\Bin\DirectX11-net40\SharpDX.DirectInput.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.DXGI">
-      <HintPath>..\..\..\..\..\Downloads\SharpDX\Bin\DirectX11-net40\SharpDX.DXGI.dll</HintPath>
+      <HintPath>..\..\..\..\Downloads\SharpDX\Bin\DirectX11-net40\SharpDX.DXGI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
