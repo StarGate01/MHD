@@ -30,3 +30,16 @@ C:\Users\Christoph\documents\visual studio 2013\Projects\MHD\MHD\bin\Debug\Conte
 \\RASPBERRYPI\ShareDev\MHD\MHD\bin\Debug\SharpDX.DirectInput.xml
 \\RASPBERRYPI\ShareDev\MHD\MHD\bin\Debug\SharpDX.DXGI.xml
 \\RASPBERRYPI\ShareDev\MHD\MHD\obj\Debug\MHD.csprojResolveAssemblyReference.cache
+C:\Users\Christoph\Documents\GitHub\MHD\MHD\bin\Debug\Content\Image\background.png
+C:\Users\Christoph\Documents\GitHub\MHD\MHD\bin\Debug\Content\Image\menu.png
+C:\Users\Christoph\Documents\GitHub\MHD\MHD\bin\Debug\MHD.exe
+C:\Users\Christoph\Documents\GitHub\MHD\MHD\bin\Debug\MHD.pdb
+C:\Users\Christoph\Documents\GitHub\MHD\MHD\bin\Debug\SharpDX.xml
+C:\Users\Christoph\Documents\GitHub\MHD\MHD\bin\Debug\SharpDX.D3DCompiler.xml
+C:\Users\Christoph\Documents\GitHub\MHD\MHD\bin\Debug\SharpDX.Direct2D1.xml
+C:\Users\Christoph\Documents\GitHub\MHD\MHD\bin\Debug\SharpDX.Direct3D11.xml
+C:\Users\Christoph\Documents\GitHub\MHD\MHD\bin\Debug\SharpDX.DirectInput.xml
+C:\Users\Christoph\Documents\GitHub\MHD\MHD\bin\Debug\SharpDX.DXGI.xml
+C:\Users\Christoph\Documents\GitHub\MHD\MHD\obj\Debug\MHD.csprojResolveAssemblyReference.cache
+C:\Users\Christoph\Documents\GitHub\MHD\MHD\obj\Debug\MHD.exe
+C:\Users\Christoph\Documents\GitHub\MHD\MHD\obj\Debug\MHD.pdb
