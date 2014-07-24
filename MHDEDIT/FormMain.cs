@@ -22,23 +22,70 @@ namespace MHDEDIT
     public partial class FormMain : Form
     {
 
+        #region private Attributes
+
         private string lastSavePath = null;
+        private MHD.Content.Level.Manager dataManager;
+
+        #endregion
+
+        #region Initialisation
 
         public FormMain()
         {
             InitializeComponent();
+            dataManager = new MHD.Content.Level.Manager(ref treeViewOverview);
         }
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            SaveLoad.Load(ref treeViewOverview, "EmptyLevel.xml");
+            dataManager.data = MHD.Content.Level.Converter.XMLToData("EmptyLevel.xml");
+            dataManager.Refresh();
+            treeViewOverview.ExpandAll();
             treeViewOverview.Nodes[0].Nodes[0].Collapse();
             treeViewOverview.Nodes[0].Nodes[1].Collapse();
             treeViewOverview.Nodes[0].Nodes[2].Collapse();
             treeViewOverview.Nodes[0].EnsureVisible();
+            treeViewOverview.SelectedNode = treeViewOverview.Nodes[0];
+            treeViewOverview.Focus();
         }
 
+        #endregion
+
         #region Main menu
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process p = new Process();
+            p.StartInfo.FileName = Application.ExecutablePath;
+            p.Start();
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult res = MessageBox.Show("Unsaved changes will be lost.", "MHDEDIT - Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+            if (res == DialogResult.OK) openFileDialog1.ShowDialog();
+        }
+
+        private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                this.Cursor = Cursors.WaitCursor;
+                lastSavePath = openFileDialog1.FileName;
+                MHD.Content.Level.Root data = MHD.Content.Level.Converter.XMLToData(lastSavePath);
+                dataManager.Refresh();
+                treeViewOverview.ExpandAll();
+                treeViewOverview.Nodes[0].EnsureVisible();
+                treeViewOverview.SelectedNode = treeViewOverview.Nodes[0];
+                this.Cursor = Cursors.Default;
+            }
+            catch (Exception ex)
+            {
+                lastSavePath = null;
+                MessageBox.Show(ex.Message, "MHDEDIT - Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -46,7 +93,8 @@ namespace MHDEDIT
             {
                 try
                 {
-                    SaveLoad.Save(treeViewOverview, lastSavePath);
+                    MHD.Content.Level.Root data = (MHD.Content.Level.Root)MHD.Content.Level.Converter.NodeToData(treeViewOverview.Nodes[0].Nodes);
+                    MHD.Content.Level.Converter.DataToXML(data, lastSavePath);
                 }
                 catch (Exception ex)
                 {
@@ -65,39 +113,16 @@ namespace MHDEDIT
             saveFileDialog1.ShowDialog();
         }
 
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            DialogResult res = MessageBox.Show("Do you want to override the current level?", "MHDEDIT - Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-            if (res == DialogResult.Yes) openFileDialog1.ShowDialog();
-        }
-
-        private void newToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Process p = new Process();
-            p.StartInfo.FileName = Application.ExecutablePath;
-            p.Start();
-        }
-
         private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
             lastSavePath = saveFileDialog1.FileName;
             saveToolStripMenuItem_Click(null, null);
         }
 
-        private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
-        {
-            try
-            {
-                SaveLoad.Load(ref treeViewOverview, openFileDialog1.FileName);
-            }
-            catch (Exception ex)
-            {
-                lastSavePath = null;
-                MessageBox.Show(ex.Message, "MHDEDIT - Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
         #endregion
+
+
+        #region Overview
 
         #region Overview Menu
 
@@ -113,15 +138,11 @@ namespace MHDEDIT
 
         private void addToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (treeViewOverview.SelectedNode != null)
-            {
-                TreeNode tNode = new TreeNode("Object", 3, 3);
-                tNode.Nodes.Add(new TreeNode("UID", 3, 3, new TreeNode[] { new TreeNode(Guid.NewGuid().ToString(), 7, 7) }));
-                treeViewOverview.SelectedNode.Nodes.Add(tNode);
-                tNode.ExpandAll();
-                tNode.EnsureVisible();
-                treeViewOverview.SelectedNode = tNode;
-            }
+            dataManager.data.Objects.Add(new MHD.Content.Level.Object());
+            dataManager.Refresh();
+            TreeNode tNode = treeViewOverview.Nodes[0].Nodes[2].Nodes[dataManager.data.Objects.Count - 1];
+            tNode.EnsureVisible();
+            treeViewOverview.SelectedNode = tNode;
         }
 
         private void editToolStripMenuItem_Click(object sender, EventArgs e)
@@ -134,19 +155,26 @@ namespace MHDEDIT
             if (treeViewOverview.SelectedNode != null)
             {
                 DialogResult res = MessageBox.Show("Do you want to remove this object?", "MHDEDIT - Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (res == DialogResult.Yes) treeViewOverview.SelectedNode.Remove();
+                if (res == DialogResult.Yes)
+                {
+                    treeViewOverview.SelectedNode.Remove();
+                    dataManager.data = (MHD.Content.Level.Root)MHD.Content.Level.Converter.NodeToData(treeViewOverview.Nodes[0].Nodes);
+                }
             }
         }
 
         #endregion
 
+        #region Treeview events
+
         private void treeViewOverview_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (treeViewOverview.SelectedNode != null)
+            if (treeViewOverview.SelectedNode != null && treeViewOverview.SelectedNode.Parent != null)
             {
-                addToolStripMenuItem.Enabled = (treeViewOverview.SelectedNode.Text == "Objects");
-                if (treeViewOverview.SelectedNode.Parent != null) editToolStripMenuItem.Enabled = removeToolStripMenuItem.Enabled = (treeViewOverview.SelectedNode.Parent.Text == "Objects");
-                if (treeViewOverview.SelectedNode.GetNodeCount(true) == 0 && !addToolStripMenuItem.Enabled)
+                editToolStripMenuItem.Enabled = removeToolStripMenuItem.Enabled = (treeViewOverview.SelectedNode.Parent.Text == "Objects");
+                if (treeViewOverview.SelectedNode.GetNodeCount(true) == 0 &&
+                    treeViewOverview.SelectedNode.Parent.Text != "UID" &&
+                    treeViewOverview.SelectedNode.Text != "Objects")
                 {
                     treeViewOverview.LabelEdit = true;
                     treeViewOverview.SelectedNode.BeginEdit();
@@ -159,6 +187,9 @@ namespace MHDEDIT
             treeViewOverview.LabelEdit = false;
         }
 
+        #endregion
+
+        #endregion
 
     }
 

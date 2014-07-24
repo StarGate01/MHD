@@ -53,15 +53,13 @@
             this.unfoldAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.TabPageCode = new System.Windows.Forms.TabPage();
             this.TabPageRender = new System.Windows.Forms.TabPage();
-            this.statusStripMain = new System.Windows.Forms.StatusStrip();
-            this.LabelStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.objectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStripMain.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.TabPageStructure.SuspendLayout();
             this.menuStrip1.SuspendLayout();
-            this.statusStripMain.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStripMain
@@ -166,7 +164,7 @@
             this.tabControl1.Multiline = true;
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(831, 548);
+            this.tabControl1.Size = new System.Drawing.Size(831, 570);
             this.tabControl1.TabIndex = 1;
             // 
             // TabPageStructure
@@ -175,7 +173,7 @@
             this.TabPageStructure.Controls.Add(this.menuStrip1);
             this.TabPageStructure.Location = new System.Drawing.Point(4, 22);
             this.TabPageStructure.Name = "TabPageStructure";
-            this.TabPageStructure.Size = new System.Drawing.Size(823, 522);
+            this.TabPageStructure.Size = new System.Drawing.Size(823, 544);
             this.TabPageStructure.TabIndex = 2;
             this.TabPageStructure.Text = "Structure";
             this.TabPageStructure.UseVisualStyleBackColor = true;
@@ -190,7 +188,7 @@
             this.treeViewOverview.Location = new System.Drawing.Point(0, 24);
             this.treeViewOverview.Name = "treeViewOverview";
             this.treeViewOverview.SelectedImageIndex = 7;
-            this.treeViewOverview.Size = new System.Drawing.Size(823, 498);
+            this.treeViewOverview.Size = new System.Drawing.Size(823, 520);
             this.treeViewOverview.TabIndex = 0;
             this.treeViewOverview.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.treeViewOverview_AfterLabelEdit);
             this.treeViewOverview.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewOverview_AfterSelect);
@@ -213,6 +211,7 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.objectToolStripMenuItem,
             this.addToolStripMenuItem,
             this.editToolStripMenuItem,
             this.removeToolStripMenuItem,
@@ -227,7 +226,6 @@
             // 
             // addToolStripMenuItem
             // 
-            this.addToolStripMenuItem.Enabled = false;
             this.addToolStripMenuItem.Image = global::MHDEDIT.Properties.Resources.AddMark_10580;
             this.addToolStripMenuItem.Name = "addToolStripMenuItem";
             this.addToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
@@ -290,22 +288,6 @@
             this.TabPageRender.Text = "Render";
             this.TabPageRender.UseVisualStyleBackColor = true;
             // 
-            // statusStripMain
-            // 
-            this.statusStripMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.LabelStatus});
-            this.statusStripMain.Location = new System.Drawing.Point(0, 572);
-            this.statusStripMain.Name = "statusStripMain";
-            this.statusStripMain.Size = new System.Drawing.Size(831, 22);
-            this.statusStripMain.TabIndex = 2;
-            this.statusStripMain.Text = "statusStrip1";
-            // 
-            // LabelStatus
-            // 
-            this.LabelStatus.Name = "LabelStatus";
-            this.LabelStatus.Size = new System.Drawing.Size(39, 17);
-            this.LabelStatus.Text = "Ready";
-            // 
             // saveFileDialog1
             // 
             this.saveFileDialog1.DefaultExt = "xml";
@@ -322,6 +304,13 @@
             this.openFileDialog1.Title = "Open level";
             this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk);
             // 
+            // objectToolStripMenuItem
+            // 
+            this.objectToolStripMenuItem.Enabled = false;
+            this.objectToolStripMenuItem.Name = "objectToolStripMenuItem";
+            this.objectToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
+            this.objectToolStripMenuItem.Text = "Object: ";
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -329,7 +318,6 @@
             this.ClientSize = new System.Drawing.Size(831, 594);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.menuStripMain);
-            this.Controls.Add(this.statusStripMain);
             this.MainMenuStrip = this.menuStripMain;
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -343,8 +331,6 @@
             this.TabPageStructure.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.statusStripMain.ResumeLayout(false);
-            this.statusStripMain.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -366,8 +352,6 @@
         private System.Windows.Forms.TabPage TabPageStructure;
         private System.Windows.Forms.TabPage TabPageRender;
         private System.Windows.Forms.TabPage TabPageCode;
-        private System.Windows.Forms.StatusStrip statusStripMain;
-        private System.Windows.Forms.ToolStripStatusLabel LabelStatus;
         private System.Windows.Forms.TreeView treeViewOverview;
         private System.Windows.Forms.ImageList imageListOverview;
         private System.Windows.Forms.MenuStrip menuStrip1;
@@ -379,6 +363,7 @@
         private System.Windows.Forms.ToolStripMenuItem unfoldAllToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.ToolStripMenuItem objectToolStripMenuItem;
     }
 }
 

@@ -1,73 +1,30 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<Level>
+﻿<?xml version="1.0"?>
+<Root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Meta>
-    <Version>
-      1
-    </Version>
-    <Name>
-      level
-    </Name>
+    <Version>1</Version>
+    <Name>level</Name>
     <Objective>
       <Condition>
         <TouchObjectCondition>
-          <Enabled>
-            true
-          </Enabled>
-          <ObjectUID>
-            0
-          </ObjectUID>
+          <Enabled>true</Enabled>
+          <ObjectUID />
         </TouchObjectCondition>
         <ScriptCondition>
-          <Enabled>
-            false
-          </Enabled>
+          <Enabled>true</Enabled>
+          <Script>level.cs</Script>
         </ScriptCondition>
       </Condition>
-      <SuccessMessage>
-        message
-      </SuccessMessage>
-      <FailureMessage>
-        message
-      </FailureMessage>
+      <SuccessMessage>success</SuccessMessage>
+      <FailureMessage>failure</FailureMessage>
     </Objective>
   </Meta>
   <Player>
     <StartPosition>
-      <X>
-        0
-      </X>
-      <Y>
-        0
-      </Y>
+      <X>0</X>
+      <Y>0</Y>
     </StartPosition>
-    <StartRotation>
-      0
-    </StartRotation>
-    <StartEnergy>
-      100
-    </StartEnergy>
+    <StartRotation>0</StartRotation>
+    <StartEnergy>1</StartEnergy>
   </Player>
-  <Objects>
-    <Object>
-      <UID>
-        none
-      </UID>
-      <Data>
-        <Position>
-          <X>
-            0
-          </X>
-          <Y>
-            0
-          </Y>
-        </Position>
-        <Rotation>
-          0
-        </Rotation>
-      </Data>
-      <Script>
-        none.cs
-      </Script>
-    </Object>
-  </Objects>
-</Level>
+  <Objects />
+</Root>
