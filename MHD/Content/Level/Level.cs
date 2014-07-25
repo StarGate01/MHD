@@ -24,11 +24,6 @@ namespace MHD.Content.Level
     public class Converter
     {
 
-        public static T CastDirect<T>(object input)
-        {
-            return (T)input;
-        }
-
         public static void DataToXML(Root root, string filename)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(Root));
@@ -76,7 +71,7 @@ namespace MHD.Content.Level
                 int imageIndex = 7;
                 if (text.EndsWith(".cs")) imageIndex = 9;
                 TreeNode valueNode = new TreeNode(text, imageIndex, imageIndex);
-                if(node.Text != "UID") valueNode.Tag = true;
+                if (node.Text != "UID") valueNode.Tag = true;
                 node.Nodes.Add(valueNode);
             }
             return node;
