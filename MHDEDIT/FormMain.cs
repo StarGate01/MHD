@@ -55,7 +55,7 @@ namespace MHDEDIT
 
         #endregion
 
-       
+
         #region Main menu
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
@@ -63,6 +63,7 @@ namespace MHDEDIT
             this.Cursor = Cursors.WaitCursor;
             dataManager.data = new MHD.Content.Level.Data.Root();
             dataManager.LevelScript = Static.StaticStrings.EmptyLevelScriptCode;
+            dataManager.ObjectScripts = new Dictionary<string, string>();
             this.Cursor = Cursors.Default;
             if (!SaveAs())
             {
@@ -71,6 +72,7 @@ namespace MHDEDIT
             }
             else
             {
+                System.IO.Directory.CreateDirectory(Path.Combine(lastSavePath, "objectscripts"));
                 dataManager.Refresh();
                 dataManager.SetInit();
                 InitTabPages();
@@ -87,15 +89,24 @@ namespace MHDEDIT
                     lastSavePath = folderBrowserDialog1.SelectedPath;
                     dataManager.data = MHD.Content.Level.Converter.XMLToData(Path.Combine(lastSavePath, "level.xml"));
                     dataManager.LevelScript = System.IO.File.ReadAllText(Path.Combine(lastSavePath, "level.cs"));
+                    dataManager.ObjectScripts = new Dictionary<string, string>();
+                    foreach (string file in System.IO.Directory.GetFiles(Path.Combine(lastSavePath, "objectscripts")))
+                    {
+                        dataManager.ObjectScripts.Add(file.Substring(file.LastIndexOf("\\") + 1), System.IO.File.ReadAllText(file));
+                    }
                     dataManager.Refresh();
                     dataManager.SetInit();
+                    tabControl1.SelectedTab = TabPageStructure;
                     InitTabPages();
-                    this.Cursor = Cursors.Default;
                 }
                 catch (Exception ex)
                 {
                     lastSavePath = null;
                     MessageBox.Show(ex.Message, "MHDEDIT - Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    this.Cursor = Cursors.Default;
                 }
             }
         }
@@ -120,6 +131,10 @@ namespace MHDEDIT
                     if (treeViewOverview.Nodes.Count > 0) data = (MHD.Content.Level.Data.Root)MHD.Content.Level.Converter.NodeToData(treeViewOverview.Nodes[0].Nodes);
                     MHD.Content.Level.Converter.DataToXML(data, Path.Combine(lastSavePath, "level.xml"));
                     System.IO.File.WriteAllText(Path.Combine(lastSavePath, "level.cs"), dataManager.LevelScript);
+                    foreach (KeyValuePair<string, string> pair in dataManager.ObjectScripts)
+                    {
+                        System.IO.File.WriteAllText(Path.Combine(lastSavePath, "objectscripts", pair.Key), pair.Value);
+                    }
                     return true;
                 }
                 catch (Exception ex)
@@ -199,7 +214,6 @@ namespace MHDEDIT
             TreeNode tNode = treeViewOverview.Nodes[0].Nodes[2].Nodes[dataManager.data.Objects.Count - 1];
             tNode.EnsureVisible();
             treeViewOverview.SelectedNode = tNode;
-            dataManager.Update();
         }
 
         private void editToolStripMenuItem_Click(object sender, EventArgs e)
@@ -279,26 +293,6 @@ namespace MHDEDIT
             SetAvalonMode(false);
         }
 
-        void avalonEditor_TextChanged(object sender, EventArgs e)
-        {
-            if(tabControlEditor.SelectedTab != null && tabControlEditor.SelectedTab.Text == "level.xml")
-            {
-                try
-                {
-                    tabControlEditor.SelectedTab.Tag = avalonEditor.Text;
-                    dataManager.data = MHD.Content.Level.Converter.XMLToData(avalonEditor.Text, false);
-                    errorToolStripMenuItem.Visible = false;
-                    errorToolStripMenuItem2.Visible = false;
-                }
-                catch 
-                {
-                    dataManager.data = null;
-                    errorToolStripMenuItem.Visible = true;
-                    errorToolStripMenuItem2.Visible = true;
-                }
-            }
-        }
-
         private void SetAvalonMode(Boolean isXML)
         {
             if (!isXML)
@@ -317,23 +311,56 @@ namespace MHDEDIT
             }
         }
 
+        void avalonEditor_TextChanged(object sender, EventArgs e)
+        {
+            if (tabControlEditor.SelectedTab != null)
+            {
+                tabControlEditor.SelectedTab.Tag = avalonEditor.Text;
+                if (tabControlEditor.SelectedTab.Text == "level.xml")
+                {
+                    try
+                    {
+                        tabControlEditor.SelectedTab.Tag = avalonEditor.Text;
+                        dataManager.data = MHD.Content.Level.Converter.XMLToData(avalonEditor.Text, false);
+                        errorToolStripMenuItem.Visible = false;
+                        errorToolStripMenuItem2.Visible = false;
+                    }
+                    catch
+                    {
+                        dataManager.data = null;
+                        errorToolStripMenuItem.Visible = true;
+                        errorToolStripMenuItem2.Visible = true;
+                    }
+                }
+                else if (tabControlEditor.SelectedTab.Text == "level.cs")
+                {
+                    dataManager.LevelScript = avalonEditor.Text;
+                }
+                else
+                {
+                    dataManager.ObjectScripts[tabControlEditor.SelectedTab.Text] = avalonEditor.Text;
+                }
+            }
+
+        }
+
         #region TabControl
 
-        private void AddTabPage()
+        private TabPage AddTabPage(string title, string content, string key = null)
         {
-
+            TabPage page = new TabPage(title);
+            page.Tag = content;
+            page.Name = key;
+            tabControlEditor.TabPages.Add(page);
+            return page;
         }
 
         private void InitTabPages()
         {
             tabControlEditor.TabPages.Clear();
-            TabPage page2 = new TabPage("level.xml");
-            page2.Tag = MHD.Content.Level.Converter.DataToXML(dataManager.data);
-            tabControlEditor.TabPages.Add(page2);
-            TabPage page = new TabPage("level.cs");
-            page.Tag = dataManager.LevelScript;
-            tabControlEditor.TabPages.Add(page);
-            tabControlEditor.SelectedTab = page;
+            AddTabPage("level.xml", MHD.Content.Level.Converter.DataToXML(dataManager.data));
+            AddTabPage("level.cs", dataManager.LevelScript);
+            tabControlEditor.SelectedIndex = 1;
         }
 
         private void tabControlEditor_SelectedIndexChanged(object sender, EventArgs e)
@@ -357,9 +384,31 @@ namespace MHDEDIT
 
         private void treeViewOverview_DoubleClick(object sender, EventArgs e)
         {
-            if (treeViewOverview.SelectedNode != null)
+            if (treeViewOverview.SelectedNode != null && treeViewOverview.SelectedNode.Text.EndsWith(".cs"))
             {
-
+                if (treeViewOverview.SelectedNode.Text == "level.cs")
+                {
+                    tabControl1.SelectedTab = TabPageCode;
+                    tabControlEditor.SelectedIndex = 1;
+                }
+                else
+                {
+                    string key = treeViewOverview.SelectedNode.Text;
+                    string uid = key.Replace(".cs", "");
+                    if (!dataManager.ObjectScripts.ContainsKey(key))
+                    {
+                        dataManager.ObjectScripts[key] = Static.StaticStrings.EmptyObjectScriptCode.Replace("{%UID%}", uid.Replace("-", "_"));
+                    }
+                    if (tabControlEditor.TabPages.ContainsKey(uid))
+                    {
+                        tabControlEditor.SelectedIndex = tabControlEditor.TabPages.IndexOfKey(uid);
+                    }
+                    else
+                    {
+                        tabControl1.SelectedTab = TabPageCode;
+                        tabControlEditor.SelectedTab = AddTabPage(key, dataManager.ObjectScripts[key], uid);
+                    }
+                }
             }
         }
 

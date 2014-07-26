@@ -61,10 +61,9 @@ namespace MHD.Content.Level.Data
     public class Object
     {
         public string UID = Guid.NewGuid().ToString();
-        public string Name = "object";
         public StartPosition StartPosition = new StartPosition();
         public float StartRotation = 0;
-        public string Script = "script.cs";
+        public string Script = "";
         public Geometry Geometry = new Geometry();
     }
 

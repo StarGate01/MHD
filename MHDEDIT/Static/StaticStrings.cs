@@ -20,7 +20,7 @@ using SharpDX.DirectInput;
 using SharpDX.DirectWrite;
 using MHD;
 
-public class ObjectScript: MHD.Gameplay.Objects.GameObject
+public class ObjectScript_{%UID%}: MHD.Gameplay.Objects.GameObject
 {
 
     public ObjectScript(PathGeometry bounds, float rotation, MHD.Gameplay.Objects.GameObject.ColorInfo color): base(bounds, rotation, color) {}

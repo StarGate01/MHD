@@ -145,6 +145,7 @@ namespace MHD.Content.Level
 
         public Root data;
         public string LevelScript;
+        public Dictionary<string, string> ObjectScripts;
         private TreeView treeView;
 
         public Manager(ref TreeView view)
@@ -171,6 +172,7 @@ namespace MHD.Content.Level
             treeView.Nodes[0].Nodes[0].EnsureVisible();
             treeView.Nodes[0].Nodes[1].EnsureVisible();
             treeView.Nodes[0].Nodes[2].EnsureVisible();
+            treeView.Nodes[0].Nodes[2].Expand();
             treeView.SelectedNode = treeView.Nodes[0];
             treeView.Focus();
         }
