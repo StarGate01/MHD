@@ -38,6 +38,7 @@
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.compileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.compileWithDebugFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.referenceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,7 +66,6 @@
             this.TabPageRender = new System.Windows.Forms.TabPage();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.saveFileDialogCompile = new System.Windows.Forms.SaveFileDialog();
-            this.compileWithDebugFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStripMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.TabPageStructure.SuspendLayout();
@@ -83,7 +83,7 @@
             this.menuStripMain.Location = new System.Drawing.Point(0, 0);
             this.menuStripMain.Name = "menuStripMain";
             this.menuStripMain.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.menuStripMain.Size = new System.Drawing.Size(731, 24);
+            this.menuStripMain.Size = new System.Drawing.Size(995, 24);
             this.menuStripMain.TabIndex = 0;
             this.menuStripMain.Text = "menuStrip1";
             // 
@@ -155,6 +155,14 @@
             this.compileToolStripMenuItem.Text = "&Compile";
             this.compileToolStripMenuItem.Click += new System.EventHandler(this.compileToolStripMenuItem_Click);
             // 
+            // compileWithDebugFileToolStripMenuItem
+            // 
+            this.compileWithDebugFileToolStripMenuItem.Image = global::MHDEDIT.Properties.Resources.BuildSolution_104;
+            this.compileWithDebugFileToolStripMenuItem.Name = "compileWithDebugFileToolStripMenuItem";
+            this.compileWithDebugFileToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            this.compileWithDebugFileToolStripMenuItem.Text = "Compile with debug file";
+            this.compileWithDebugFileToolStripMenuItem.Click += new System.EventHandler(this.compileWithDebugFileToolStripMenuItem_Click);
+            // 
             // testToolStripMenuItem
             // 
             this.testToolStripMenuItem.Image = global::MHDEDIT.Properties.Resources.arrow_run_16xLG;
@@ -198,7 +206,7 @@
             this.tabControlMain.Multiline = true;
             this.tabControlMain.Name = "tabControlMain";
             this.tabControlMain.SelectedIndex = 0;
-            this.tabControlMain.Size = new System.Drawing.Size(731, 361);
+            this.tabControlMain.Size = new System.Drawing.Size(995, 652);
             this.tabControlMain.TabIndex = 1;
             this.tabControlMain.SelectedIndexChanged += new System.EventHandler(this.tabControlMain_SelectedIndexChanged);
             // 
@@ -208,7 +216,7 @@
             this.TabPageStructure.Controls.Add(this.menuStrip1);
             this.TabPageStructure.Location = new System.Drawing.Point(4, 22);
             this.TabPageStructure.Name = "TabPageStructure";
-            this.TabPageStructure.Size = new System.Drawing.Size(723, 335);
+            this.TabPageStructure.Size = new System.Drawing.Size(987, 626);
             this.TabPageStructure.TabIndex = 2;
             this.TabPageStructure.Text = "Structure";
             this.TabPageStructure.UseVisualStyleBackColor = true;
@@ -223,7 +231,7 @@
             this.treeViewOverview.Location = new System.Drawing.Point(0, 24);
             this.treeViewOverview.Name = "treeViewOverview";
             this.treeViewOverview.SelectedImageIndex = 7;
-            this.treeViewOverview.Size = new System.Drawing.Size(723, 311);
+            this.treeViewOverview.Size = new System.Drawing.Size(987, 602);
             this.treeViewOverview.TabIndex = 0;
             this.treeViewOverview.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.treeViewOverview_AfterLabelEdit);
             this.treeViewOverview.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewOverview_AfterSelect);
@@ -257,7 +265,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.menuStrip1.Size = new System.Drawing.Size(723, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(987, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -440,21 +448,13 @@
             this.saveFileDialogCompile.FileName = "level.dll";
             this.saveFileDialogCompile.Filter = "Dynamic link library|*.dll";
             this.saveFileDialogCompile.Title = "Save compiled level";
-            this.saveFileDialogCompile.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog1_FileOk);
-            // 
-            // compileWithDebugFileToolStripMenuItem
-            // 
-            this.compileWithDebugFileToolStripMenuItem.Image = global::MHDEDIT.Properties.Resources.BuildSolution_104;
-            this.compileWithDebugFileToolStripMenuItem.Name = "compileWithDebugFileToolStripMenuItem";
-            this.compileWithDebugFileToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
-            this.compileWithDebugFileToolStripMenuItem.Text = "Compile with debug file";
-            this.compileWithDebugFileToolStripMenuItem.Click += new System.EventHandler(this.compileWithDebugFileToolStripMenuItem_Click);
+            this.saveFileDialogCompile.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialogCompile_FileOk);
             // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(731, 385);
+            this.ClientSize = new System.Drawing.Size(995, 676);
             this.Controls.Add(this.tabControlMain);
             this.Controls.Add(this.menuStripMain);
             this.MainMenuStrip = this.menuStripMain;

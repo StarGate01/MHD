@@ -40,7 +40,6 @@
     <None Include="app.manifest" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyInfo1.cs" />
     <Compile Include="Content\ContentManager.cs" />
     <Compile Include="Content\IResourceusing.cs" />
     <Compile Include="Content\Level\Level.cs" />
@@ -56,6 +55,7 @@
     <Compile Include="Gameplay\UI\HUD.cs" />
     <Compile Include="Geometry\StaticPathOperations.cs" />
     <Compile Include="Input\InputProvider.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Render\Frame.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Program.cs" />

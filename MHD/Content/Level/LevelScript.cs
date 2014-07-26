@@ -9,9 +9,7 @@ namespace MHD.Content.Level
     public interface ILevelScript
     {
 
-        Data.Root GetData();
-
-        Data.Object GetObject(string UID);
+        bool TestScriptCondition();
 
     }
 

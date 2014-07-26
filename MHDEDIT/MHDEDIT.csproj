@@ -129,6 +129,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Static\StaticStrings.cs" />
+    <EmbeddedResource Include="FormCompileErrors.resx">
+      <DependentUpon>FormCompileErrors.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
     </EmbeddedResource>

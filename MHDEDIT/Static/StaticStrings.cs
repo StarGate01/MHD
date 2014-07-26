@@ -60,27 +60,9 @@ namespace MHD.Content.Level.Data.Scrips
     public class LevelScript: MHD.Content.Level.ILevelScript
     {
 
-    	private MHD.Content.Level.Data.Root data;
-    	
-        public MHD.Content.Level.Data.Root GetData()
+    	public bool TestScriptCondition()
         {
-            try
-            {
-				Assembly assembly = Assembly.GetExecutingAssembly();
-				StreamReader streamReader = new StreamReader(assembly.GetManifestResourceStream(" + "\"level.xml.gzip\"" + @"));
-				data = MHD.Content.Level.Converter.XMLToData(MHD.Content.Level.Compression.DecompressString(streamReader.ReadToEnd()));
-				return data;
-            }
-            catch
-            {
-            	data = null;
-            }
-            return data;
-        }
-    
-        public MHD.Content.Level.Data.Object GetObject(string UID)
-        {
-            return data.Objects.Find(el => el.UID == UID);
+            return true;
         }
 
     }

@@ -19,6 +19,7 @@ using System.Windows.Interactivity;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.SharpDevelop.Dom;
+using System.CodeDom.Compiler;
 
 #endregion
 
@@ -56,7 +57,7 @@ namespace MHDEDIT
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (e.CloseReason == CloseReason.UserClosing && 
+            if (e.CloseReason == CloseReason.UserClosing &&
                 MessageBox.Show("Do you want to exit MHDEDIT?" + Environment.NewLine + "Unsaved changes will be lost!", "MHDEDIT - Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == System.Windows.Forms.DialogResult.Cancel)
                 e.Cancel = true;
         }
@@ -83,7 +84,7 @@ namespace MHDEDIT
             if (tabControlMain.SelectedTab == TabPageCode && dataManager.data != null)
             {
                 dataManager.Update();
-                 tabControlEditor.TabPages[0].Tag = MHD.Content.Level.Converter.DataToXML(dataManager.data);
+                tabControlEditor.TabPages[0].Tag = MHD.Content.Level.Converter.DataToXML(dataManager.data);
                 if (tabControlEditor.SelectedIndex == 0) tabControlEditor_SelectedIndexChanged(null, null);
             }
         }
@@ -230,7 +231,6 @@ Used components:
             {
                 addPDBfile = false;
                 levelToolStripMenuItem.HideDropDown();
-                Application.DoEvents();
                 saveFileDialogCompile.ShowDialog(this);
             }
             else
@@ -245,7 +245,6 @@ Used components:
             {
                 addPDBfile = true;
                 levelToolStripMenuItem.HideDropDown();
-                Application.DoEvents();
                 saveFileDialogCompile.ShowDialog();
             }
             else
@@ -254,18 +253,20 @@ Used components:
             }
         }
 
-        private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
+        private void saveFileDialogCompile_FileOk(object sender, CancelEventArgs e)
         {
-            try
+            Save();
+            List<string> codePages = System.IO.Directory.GetFiles(Path.Combine(lastSavePath, "objectscripts"), "*.cs").ToList();
+            codePages.Add(Path.Combine(lastSavePath, "level.cs"));
+            CompilerErrorCollection errors = m_scriptCompiler.Value.CompileAndSave(m_currentFile, codePages.ToArray(), Path.Combine(lastSavePath, "level.xml"), addPDBfile, saveFileDialogCompile.FileName);
+            if(errors.Count > 0)
             {
-                Save();
-                List<string> codePages = System.IO.Directory.GetFiles(Path.Combine(lastSavePath, "objectscripts"), "*.cs").ToList();
-                codePages.Add(Path.Combine(lastSavePath, "level.cs"));
-                m_scriptCompiler.Value.CompileAndSave(m_currentFile, codePages.ToArray(), Path.Combine(lastSavePath, "level.xml"), addPDBfile, saveFileDialogCompile.FileName);
+                FormCompileErrors errorForm = new FormCompileErrors(errors);
+                errorForm.ShowDialog(this);
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show(ex.Message, "MHDEDIT - Compile error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Compiling completed", "MHDEDIT - Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
