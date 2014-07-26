@@ -72,7 +72,6 @@ namespace MHDEDIT
             }
             else
             {
-                System.IO.Directory.CreateDirectory(Path.Combine(lastSavePath, "objectscripts"));
                 dataManager.Refresh();
                 dataManager.SetInit();
                 InitTabPages();
@@ -131,6 +130,7 @@ namespace MHDEDIT
                     if (treeViewOverview.Nodes.Count > 0) data = (MHD.Content.Level.Data.Root)MHD.Content.Level.Converter.NodeToData(treeViewOverview.Nodes[0].Nodes);
                     MHD.Content.Level.Converter.DataToXML(data, Path.Combine(lastSavePath, "level.xml"));
                     System.IO.File.WriteAllText(Path.Combine(lastSavePath, "level.cs"), dataManager.LevelScript);
+                    System.IO.Directory.CreateDirectory(Path.Combine(lastSavePath, "objectscripts"));
                     foreach (KeyValuePair<string, string> pair in dataManager.ObjectScripts)
                     {
                         System.IO.File.WriteAllText(Path.Combine(lastSavePath, "objectscripts", pair.Key), pair.Value);
@@ -186,6 +186,43 @@ namespace MHDEDIT
                 dataManager.Update();
                 tabControlEditor.TabPages[0].Tag = MHD.Content.Level.Converter.DataToXML(dataManager.data);
                 if (tabControlEditor.SelectedIndex == 0) tabControlEditor_SelectedIndexChanged(null, null);
+            }
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(@"MHDEDIT: MHD Editor
+By Christoph Honal
+
+Used components:
+ - SharpDX
+ - AvalonEdit
+ - SharpDevelopCodeCompletion
+ - VS 2013 Image Library
+", "MHDEDIT - Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void compileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (dataManager.data != null)
+            {
+                saveFileDialog1.ShowDialog(this);
+            }
+            else
+            {
+                MessageBox.Show("No existing level to save", "MHDEDIT - Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
+        {
+            try
+            {
+
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "MHDEDIT - Compile error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -427,6 +464,7 @@ namespace MHDEDIT
         }
 
         #endregion
+
 
         #endregion
 
