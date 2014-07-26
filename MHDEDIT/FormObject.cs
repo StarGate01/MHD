@@ -13,9 +13,9 @@ namespace MHDEDIT
     public partial class FormObject : Form
     {
 
-        private MHD.Content.Level.Object obj = new MHD.Content.Level.Object();
+        private MHD.Content.Level.Data.Object obj = new MHD.Content.Level.Data.Object();
 
-        public FormObject(MHD.Content.Level.Object o = null)
+        public FormObject(MHD.Content.Level.Data.Object o = null)
         {
             if (o != null) obj = o;
             InitializeComponent();

@@ -6,10 +6,10 @@ using System.Text;
 namespace MHD.Content.Level
 {
 
-    public interface LevelScript
+    public interface ILevelScript
     {
 
-        Root GetData();
+        Data.Root GetData();
       
         Gameplay.Objects.GameObject GetObject(string UID);
 

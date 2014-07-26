@@ -13,6 +13,12 @@ using System.Threading;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Windows.Forms.Integration;
+using System.Windows.Media;
+using System.Windows.Interactivity;
+using ICSharpCode.AvalonEdit.CodeCompletion;
+using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.SharpDevelop.Dom;
 
 #endregion
 
@@ -26,6 +32,10 @@ namespace MHDEDIT
 
         private string lastSavePath = null;
         private MHD.Content.Level.Manager dataManager;
+        private Lazy<Compile.CSharpScriptCompiler> m_scriptCompiler;
+        private Compile.ScriptFile m_currentFile;
+        private ICSharpCode.AvalonEdit.TextEditor avalonEditor;
+        private CodeCompletionBeahvior avalonCodeCompletionBehaviour;
 
         #endregion
 
@@ -34,67 +44,83 @@ namespace MHDEDIT
         public FormMain()
         {
             InitializeComponent();
-            dataManager = new MHD.Content.Level.Manager(ref treeViewOverview);
         }
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            dataManager.data = new MHD.Content.Level.Root();
-            dataManager.Refresh();
-            treeViewOverview.ExpandAll();
-            treeViewOverview.Nodes[0].Nodes[0].Collapse();
-            treeViewOverview.Nodes[0].Nodes[1].Collapse();
-            treeViewOverview.Nodes[0].Nodes[2].Collapse();
-            treeViewOverview.Nodes[0].EnsureVisible();
-            treeViewOverview.SelectedNode = treeViewOverview.Nodes[0];
-            treeViewOverview.Focus();
+            dataManager = new MHD.Content.Level.Manager(ref treeViewOverview);
+            m_scriptCompiler = new Lazy<Compile.CSharpScriptCompiler>();
+            LoadAvalon();
         }
 
         #endregion
 
+       
         #region Main menu
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Process p = new Process();
-            p.StartInfo.FileName = Application.ExecutablePath;
-            p.Start();
+            this.Cursor = Cursors.WaitCursor;
+            dataManager.data = new MHD.Content.Level.Data.Root();
+            dataManager.LevelScript = Static.StaticStrings.EmptyLevelScriptCode;
+            this.Cursor = Cursors.Default;
+            if (!SaveAs())
+            {
+                dataManager.data = null;
+                dataManager.LevelScript = "";
+            }
+            else
+            {
+                dataManager.Refresh();
+                dataManager.SetInit();
+                InitTabPages();
+            }
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DialogResult res = MessageBox.Show("Unsaved changes will be lost.", "MHDEDIT - Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-            if (res == DialogResult.OK) openFileDialog1.ShowDialog();
-        }
-
-        private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
-        {
-            try
+            if (folderBrowserDialog1.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
             {
-                this.Cursor = Cursors.WaitCursor;
-                lastSavePath = openFileDialog1.FileName;
-                MHD.Content.Level.Root data = MHD.Content.Level.Converter.XMLToData(lastSavePath);
-                dataManager.Refresh();
-                treeViewOverview.ExpandAll();
-                treeViewOverview.Nodes[0].EnsureVisible();
-                treeViewOverview.SelectedNode = treeViewOverview.Nodes[0];
-                this.Cursor = Cursors.Default;
-            }
-            catch (Exception ex)
-            {
-                lastSavePath = null;
-                MessageBox.Show(ex.Message, "MHDEDIT - Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                try
+                {
+                    this.Cursor = Cursors.WaitCursor;
+                    lastSavePath = folderBrowserDialog1.SelectedPath;
+                    dataManager.data = MHD.Content.Level.Converter.XMLToData(Path.Combine(lastSavePath, "level.xml"));
+                    dataManager.LevelScript = System.IO.File.ReadAllText(Path.Combine(lastSavePath, "level.cs"));
+                    dataManager.Refresh();
+                    dataManager.SetInit();
+                    InitTabPages();
+                    this.Cursor = Cursors.Default;
+                }
+                catch (Exception ex)
+                {
+                    lastSavePath = null;
+                    MessageBox.Show(ex.Message, "MHDEDIT - Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Save();
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveAs();
+        }
+
+        private bool Save()
+        {
             if (lastSavePath != null)
             {
                 try
                 {
-                    MHD.Content.Level.Root data = (MHD.Content.Level.Root)MHD.Content.Level.Converter.NodeToData(treeViewOverview.Nodes[0].Nodes);
-                    MHD.Content.Level.Converter.DataToXML(data, lastSavePath);
+                    MHD.Content.Level.Data.Root data = dataManager.data;
+                    if (treeViewOverview.Nodes.Count > 0) data = (MHD.Content.Level.Data.Root)MHD.Content.Level.Converter.NodeToData(treeViewOverview.Nodes[0].Nodes);
+                    MHD.Content.Level.Converter.DataToXML(data, Path.Combine(lastSavePath, "level.xml"));
+                    System.IO.File.WriteAllText(Path.Combine(lastSavePath, "level.cs"), dataManager.LevelScript);
+                    return true;
                 }
                 catch (Exception ex)
                 {
@@ -104,27 +130,55 @@ namespace MHDEDIT
             }
             else
             {
-                saveAsToolStripMenuItem_Click(sender, e);
+                return SaveAs();
             }
+            return false;
         }
 
-        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        private bool SaveAs()
         {
-            saveFileDialog1.ShowDialog();
+            if (dataManager.data != null)
+            {
+                if (folderBrowserDialog1.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
+                {
+                    lastSavePath = folderBrowserDialog1.SelectedPath;
+                    return Save();
+                }
+            }
+            else
+            {
+                MessageBox.Show("No existing level to save", "MHDEDIT - Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            return false;
         }
 
-        private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            lastSavePath = saveFileDialog1.FileName;
-            saveToolStripMenuItem_Click(null, null);
+            if (tabControl1.SelectedTab == TabPageStructure)
+            {
+                if (dataManager.data != null)
+                {
+                    dataManager.Refresh();
+                    dataManager.SetInit();
+                }
+                else
+                {
+                    treeViewOverview.Nodes.Clear();
+                }
+            }
+            if (tabControl1.SelectedTab == TabPageCode && dataManager.data != null)
+            {
+                dataManager.Update();
+                tabControlEditor.TabPages[0].Tag = MHD.Content.Level.Converter.DataToXML(dataManager.data);
+                if (tabControlEditor.SelectedIndex == 0) tabControlEditor_SelectedIndexChanged(null, null);
+            }
         }
 
         #endregion
 
-
         #region Overview
 
-        #region Overview Menu
+        #region Menu
 
         private void unfoldAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -133,21 +187,24 @@ namespace MHDEDIT
 
         private void contractViewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            treeViewOverview.CollapseAll();
+            dataManager.SetInit();
         }
 
         private void addToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            dataManager.data.Objects.Add(new MHD.Content.Level.Object());
+            MHD.Content.Level.Data.Object obj = new MHD.Content.Level.Data.Object();
+            obj.Script = obj.UID + ".cs";
+            dataManager.data.Objects.Add(obj);
             dataManager.Refresh();
             TreeNode tNode = treeViewOverview.Nodes[0].Nodes[2].Nodes[dataManager.data.Objects.Count - 1];
             tNode.EnsureVisible();
             treeViewOverview.SelectedNode = tNode;
+            dataManager.Update();
         }
 
         private void editToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            dataManager.Update();
         }
 
         private void removeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -158,17 +215,24 @@ namespace MHDEDIT
                 if (res == DialogResult.Yes)
                 {
                     treeViewOverview.SelectedNode.Remove();
-                    dataManager.data = (MHD.Content.Level.Root)MHD.Content.Level.Converter.NodeToData(treeViewOverview.Nodes[0].Nodes);
+                    dataManager.Update();
                 }
             }
         }
 
+        private void errorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tabControl1.SelectedTab = TabPageCode;
+            tabControlEditor.SelectedIndex = 0;
+        }
+
         #endregion
 
-        #region Treeview events
+        #region Treeview
 
         private void treeViewOverview_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            addToolStripMenuItem.Enabled = (treeViewOverview.SelectedNode != null);
             if (treeViewOverview.SelectedNode != null && treeViewOverview.SelectedNode.Parent != null)
             {
                 editToolStripMenuItem.Enabled = removeToolStripMenuItem.Enabled = (treeViewOverview.SelectedNode.Parent.Text == "Objects");
@@ -183,6 +247,134 @@ namespace MHDEDIT
         private void treeViewOverview_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
             treeViewOverview.LabelEdit = false;
+            dataManager.Update();
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Code
+
+        private void LoadAvalon()
+        {
+            avalonEditor = new ICSharpCode.AvalonEdit.TextEditor();
+            avalonEditor.Name = "TextEditor";
+            avalonEditor.ShowLineNumbers = true;
+            avalonEditor.FontFamily = new System.Windows.Media.FontFamily("Courier New");
+            avalonEditor.FontSize = 14;
+            avalonEditor.Options.ConvertTabsToSpaces = true;
+            avalonEditor.Options.EnableTextDragDrop = true;
+            avalonEditor.TextArea.SelectionCornerRadius = 0;
+            avalonEditor.IsEnabled = false;
+            elementHostEditor.Child = avalonEditor;
+            avalonEditor.TextChanged += avalonEditor_TextChanged;
+            m_currentFile = new Compile.ScriptFile("");
+            avalonEditor.Text = m_currentFile.ScriptContent;
+            BehaviorCollection avalonBehahiors = Interaction.GetBehaviors(avalonEditor);
+            avalonCodeCompletionBehaviour = new ICSharpCode.AvalonEdit.CodeCompletion.CodeCompletionBeahvior();
+            avalonCodeCompletionBehaviour.FilterStrategy = m_currentFile.FilterStrategy;
+            avalonCodeCompletionBehaviour.ProjectContent = m_currentFile.ProjectContent;
+            avalonBehahiors.Add(avalonCodeCompletionBehaviour);
+            SetAvalonMode(false);
+        }
+
+        void avalonEditor_TextChanged(object sender, EventArgs e)
+        {
+            if(tabControlEditor.SelectedTab != null && tabControlEditor.SelectedTab.Text == "level.xml")
+            {
+                try
+                {
+                    tabControlEditor.SelectedTab.Tag = avalonEditor.Text;
+                    dataManager.data = MHD.Content.Level.Converter.XMLToData(avalonEditor.Text, false);
+                    errorToolStripMenuItem.Visible = false;
+                    errorToolStripMenuItem2.Visible = false;
+                }
+                catch 
+                {
+                    dataManager.data = null;
+                    errorToolStripMenuItem.Visible = true;
+                    errorToolStripMenuItem2.Visible = true;
+                }
+            }
+        }
+
+        private void SetAvalonMode(Boolean isXML)
+        {
+            if (!isXML)
+            {
+                avalonEditor.SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinition("C#");
+                avalonEditor.TextArea.IndentationStrategy = new ICSharpCode.AvalonEdit.Indentation.CSharp.CSharpIndentationStrategy();
+                avalonCodeCompletionBehaviour.ProjectContent = m_currentFile.ProjectContent;
+                avalonCodeCompletionBehaviour.FilterStrategy = m_currentFile.FilterStrategy;
+            }
+            else
+            {
+                avalonEditor.SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinition("XML");
+                avalonEditor.TextArea.IndentationStrategy = new ICSharpCode.AvalonEdit.Indentation.DefaultIndentationStrategy();
+                avalonCodeCompletionBehaviour.ProjectContent = new DefaultProjectContent();
+                avalonCodeCompletionBehaviour.FilterStrategy = new Util.AllFilterStrategy();
+            }
+        }
+
+        #region TabControl
+
+        private void AddTabPage()
+        {
+
+        }
+
+        private void InitTabPages()
+        {
+            tabControlEditor.TabPages.Clear();
+            TabPage page2 = new TabPage("level.xml");
+            page2.Tag = MHD.Content.Level.Converter.DataToXML(dataManager.data);
+            tabControlEditor.TabPages.Add(page2);
+            TabPage page = new TabPage("level.cs");
+            page.Tag = dataManager.LevelScript;
+            tabControlEditor.TabPages.Add(page);
+            tabControlEditor.SelectedTab = page;
+        }
+
+        private void tabControlEditor_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tabControlEditor.SelectedTab != null)
+            {
+                avalonEditor.IsEnabled = true;
+                try
+                {
+                    m_currentFile.ScriptContent = (string)tabControlEditor.SelectedTab.Tag;
+                    avalonEditor.Text = m_currentFile.ScriptContent;
+                }
+                catch { }
+                SetAvalonMode(!tabControlEditor.SelectedTab.Text.EndsWith(".cs"));
+            }
+            else
+            {
+                avalonEditor.IsEnabled = false;
+            }
+        }
+
+        private void treeViewOverview_DoubleClick(object sender, EventArgs e)
+        {
+            if (treeViewOverview.SelectedNode != null)
+            {
+
+            }
+        }
+
+        #endregion
+
+        #region Menu
+
+        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            avalonEditor.Undo();
+        }
+
+        private void redoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            avalonEditor.Undo();
         }
 
         #endregion

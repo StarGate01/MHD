@@ -15,6 +15,7 @@ using System.Linq.Expressions;
 using System.Diagnostics;
 using SharpDX;
 using SharpDX.Direct2D1;
+using MHD.Content.Level.Data;
 
 #endregion
 
@@ -31,6 +32,14 @@ namespace MHD.Content.Level
             {
                 serializer.Serialize(stream, root);
             }
+        }
+
+        public static string DataToXML(Root root)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(Root));
+            StringWriter textWriter = new StringWriter();
+            serializer.Serialize(textWriter, root);
+            return textWriter.ToString();
         }
 
         public static TreeNode DataToNode(object obj, object rootInfo = null)
@@ -71,7 +80,7 @@ namespace MHD.Content.Level
                 int imageIndex = 7;
                 if (text.EndsWith(".cs")) imageIndex = 9;
                 TreeNode valueNode = new TreeNode(text, imageIndex, imageIndex);
-                if (node.Text != "UID") valueNode.Tag = true;
+                if (node.Text != "UID" && !text.EndsWith(".cs")) valueNode.Tag = true;
                 node.Nodes.Add(valueNode);
             }
             return node;
@@ -112,12 +121,20 @@ namespace MHD.Content.Level
             return data;
         }
 
-        public static Root XMLToData(string filename)
+        public static Root XMLToData(string filename, bool isFile = true)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(Root));
-            using (FileStream stream = File.Open(filename, FileMode.OpenOrCreate))
+            if (isFile)
             {
-                return (Root)serializer.Deserialize(stream);
+                using (FileStream stream = File.Open(filename, FileMode.OpenOrCreate))
+                {
+                    return (Root)serializer.Deserialize(stream);
+                }
+            }
+            else
+            {
+                StringReader textReader = new StringReader(filename); 
+                return (Root)serializer.Deserialize(textReader);
             }
         }
 
@@ -127,6 +144,7 @@ namespace MHD.Content.Level
     {
 
         public Root data;
+        public string LevelScript;
         private TreeView treeView;
 
         public Manager(ref TreeView view)
@@ -142,77 +160,21 @@ namespace MHD.Content.Level
             treeView.ResumeLayout();
         }
 
+        public void Update()
+        {
+            data = (Data.Root)Converter.NodeToData(treeView.Nodes[0].Nodes);
+        }
+
+        public void SetInit()
+        {
+            treeView.CollapseAll();
+            treeView.Nodes[0].Nodes[0].EnsureVisible();
+            treeView.Nodes[0].Nodes[1].EnsureVisible();
+            treeView.Nodes[0].Nodes[2].EnsureVisible();
+            treeView.SelectedNode = treeView.Nodes[0];
+            treeView.Focus();
+        }
+
     }
-
-    #region Data classes
-
-    public class Root
-    {
-        public Meta Meta = new Meta();
-        public Player Player = new Player();
-        public List<Object> Objects = new List<Object>();
-    }
-
-    public class Meta
-    {
-        public int Version = 1;
-        public string Name = "level";
-        public Objective Objective = new Objective();
-    }
-
-    public class Objective
-    {
-        public Condition Condition = new Condition();
-        public string SuccessMessage = "success";
-        public string FailureMessage = "failure";
-    }
-
-    public class Condition
-    {
-        public TouchObjectCondition TouchObjectCondition = new TouchObjectCondition();
-        public ScriptCondition ScriptCondition = new ScriptCondition();
-    }
-
-    public class TouchObjectCondition
-    {
-        public bool Enabled = true;
-        public string ObjectUID = "";
-    }
-
-    public class ScriptCondition
-    {
-        public bool Enabled = true;
-        public string Script = "level.cs";
-    }
-
-    public class Player
-    {
-        public StartPosition StartPosition = new StartPosition();
-        public float StartRotation = 0;
-        public float StartEnergy = 1;
-    }
-
-    public class StartPosition
-    {
-        public float X = 0;
-        public float Y = 0;
-    }
-
-    public class Object
-    {
-        public string UID = Guid.NewGuid().ToString();
-        public string Name = "object";
-        public StartPosition StartPosition = new StartPosition();
-        public float StartRotation = 0;
-        public string Script = "script.cs";
-        public Geometry Geometry = new Geometry();
-    }
-
-    public class Geometry
-    {
-        public List<System.Drawing.Point> Points = new List<System.Drawing.Point>();
-    }
-
-    #endregion
 
 }
