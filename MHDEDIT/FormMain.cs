@@ -36,10 +36,11 @@ namespace MHDEDIT
         private Compile.ScriptFile m_currentFile;
         private ICSharpCode.AvalonEdit.TextEditor avalonEditor;
         private CodeCompletionBeahvior avalonCodeCompletionBehaviour;
+        private bool addPDBfile = false;
 
         #endregion
 
-        #region Initialisation
+        #region Form
 
         public FormMain()
         {
@@ -53,18 +54,47 @@ namespace MHDEDIT
             LoadAvalon();
         }
 
+        private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing && 
+                MessageBox.Show("Do you want to exit MHDEDIT?" + Environment.NewLine + "Unsaved changes will be lost!", "MHDEDIT - Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == System.Windows.Forms.DialogResult.Cancel)
+                e.Cancel = true;
+        }
+
         #endregion
 
 
         #region Main menu
 
+        private void tabControlMain_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tabControlMain.SelectedTab == TabPageStructure)
+            {
+                if (dataManager.data != null)
+                {
+                    dataManager.Refresh();
+                    dataManager.SetInit();
+                }
+                else
+                {
+                    treeViewOverview.Nodes.Clear();
+                }
+            }
+            if (tabControlMain.SelectedTab == TabPageCode && dataManager.data != null)
+            {
+                dataManager.Update();
+                 tabControlEditor.TabPages[0].Tag = MHD.Content.Level.Converter.DataToXML(dataManager.data);
+                if (tabControlEditor.SelectedIndex == 0) tabControlEditor_SelectedIndexChanged(null, null);
+            }
+        }
+
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (dataManager.data != null && MessageBox.Show("Do you want to load a new level?" + Environment.NewLine + "Unsaved changes on the current one will be lost!", "MHDEDIT - Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == System.Windows.Forms.DialogResult.Cancel) return;
             this.Cursor = Cursors.WaitCursor;
             dataManager.data = new MHD.Content.Level.Data.Root();
             dataManager.LevelScript = Static.StaticStrings.EmptyLevelScriptCode;
             dataManager.ObjectScripts = new Dictionary<string, string>();
-            this.Cursor = Cursors.Default;
             if (!SaveAs())
             {
                 dataManager.data = null;
@@ -74,12 +104,15 @@ namespace MHDEDIT
             {
                 dataManager.Refresh();
                 dataManager.SetInit();
-                InitTabPages();
+                tabControlMain.SelectedTab = TabPageStructure;
+                InitEditorTabPages();
             }
+            this.Cursor = Cursors.Default;
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (dataManager.data != null && MessageBox.Show("Do you want to load a level?" + Environment.NewLine + "Unsaved changes on the current one will be lost!", "MHDEDIT - Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == System.Windows.Forms.DialogResult.Cancel) return;
             if (folderBrowserDialog1.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
             {
                 try
@@ -95,8 +128,8 @@ namespace MHDEDIT
                     }
                     dataManager.Refresh();
                     dataManager.SetInit();
-                    tabControl1.SelectedTab = TabPageStructure;
-                    InitTabPages();
+                    tabControlMain.SelectedTab = TabPageStructure;
+                    InitEditorTabPages();
                 }
                 catch (Exception ex)
                 {
@@ -135,6 +168,17 @@ namespace MHDEDIT
                     {
                         System.IO.File.WriteAllText(Path.Combine(lastSavePath, "objectscripts", pair.Key), pair.Value);
                     }
+                    List<string> codePages = System.IO.Directory.GetFiles(Path.Combine(lastSavePath, "objectscripts"), "*.cs").ToList();
+                    List<string> codePagesNames = codePages.Select(el => el.Substring(el.LastIndexOf("\\") + 1)).ToList();
+                    foreach (MHD.Content.Level.Data.Object obj in dataManager.data.Objects)
+                    {
+                        string scriptName = obj.UID + ".cs"; ;
+                        if (!codePagesNames.Contains(scriptName))
+                        {
+                            string scriptPath = Path.Combine(lastSavePath, "objectscripts", scriptName);
+                            File.WriteAllText(scriptPath, Static.StaticStrings.EmptyObjectScriptCode.Replace("{%UID%}", obj.UID.Replace("-", "_")));
+                        }
+                    }
                     return true;
                 }
                 catch (Exception ex)
@@ -167,28 +211,6 @@ namespace MHDEDIT
             return false;
         }
 
-        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (tabControl1.SelectedTab == TabPageStructure)
-            {
-                if (dataManager.data != null)
-                {
-                    dataManager.Refresh();
-                    dataManager.SetInit();
-                }
-                else
-                {
-                    treeViewOverview.Nodes.Clear();
-                }
-            }
-            if (tabControl1.SelectedTab == TabPageCode && dataManager.data != null)
-            {
-                dataManager.Update();
-                tabControlEditor.TabPages[0].Tag = MHD.Content.Level.Converter.DataToXML(dataManager.data);
-                if (tabControlEditor.SelectedIndex == 0) tabControlEditor_SelectedIndexChanged(null, null);
-            }
-        }
-
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show(@"MHDEDIT: MHD Editor
@@ -206,11 +228,29 @@ Used components:
         {
             if (dataManager.data != null)
             {
-                saveFileDialog1.ShowDialog(this);
+                addPDBfile = false;
+                levelToolStripMenuItem.HideDropDown();
+                Application.DoEvents();
+                saveFileDialogCompile.ShowDialog(this);
             }
             else
             {
-                MessageBox.Show("No existing level to save", "MHDEDIT - Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("No existing level to compile", "MHDEDIT - Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void compileWithDebugFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (dataManager.data != null)
+            {
+                addPDBfile = true;
+                levelToolStripMenuItem.HideDropDown();
+                Application.DoEvents();
+                saveFileDialogCompile.ShowDialog();
+            }
+            else
+            {
+                MessageBox.Show("No existing level to compile", "MHDEDIT - Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -218,9 +258,12 @@ Used components:
         {
             try
             {
-
+                Save();
+                List<string> codePages = System.IO.Directory.GetFiles(Path.Combine(lastSavePath, "objectscripts"), "*.cs").ToList();
+                codePages.Add(Path.Combine(lastSavePath, "level.cs"));
+                m_scriptCompiler.Value.CompileAndSave(m_currentFile, codePages.ToArray(), Path.Combine(lastSavePath, "level.xml"), addPDBfile, saveFileDialogCompile.FileName);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "MHDEDIT - Compile error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -229,6 +272,60 @@ Used components:
         #endregion
 
         #region Overview
+
+        #region Treeview
+
+        private void treeViewOverview_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            addToolStripMenuItem.Enabled = (treeViewOverview.SelectedNode != null);
+            if (treeViewOverview.SelectedNode != null && treeViewOverview.SelectedNode.Parent != null)
+            {
+                editToolStripMenuItem.Enabled = removeToolStripMenuItem.Enabled = (treeViewOverview.SelectedNode.Parent.Text == "Objects");
+                if (treeViewOverview.SelectedNode.Tag != null)
+                {
+                    treeViewOverview.LabelEdit = true;
+                    treeViewOverview.SelectedNode.BeginEdit();
+                }
+            }
+        }
+
+        private void treeViewOverview_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
+        {
+            treeViewOverview.LabelEdit = false;
+            dataManager.Update();
+        }
+
+        private void treeViewOverview_DoubleClick(object sender, EventArgs e)
+        {
+            if (treeViewOverview.SelectedNode != null && treeViewOverview.SelectedNode.Text.EndsWith(".cs"))
+            {
+                if (treeViewOverview.SelectedNode.Text == "level.cs")
+                {
+                    tabControlMain.SelectedTab = TabPageCode;
+                    tabControlEditor.SelectedIndex = 1;
+                }
+                else
+                {
+                    string key = treeViewOverview.SelectedNode.Text;
+                    string uid = key.Replace(".cs", "");
+                    if (!dataManager.ObjectScripts.ContainsKey(key))
+                    {
+                        dataManager.ObjectScripts[key] = Static.StaticStrings.EmptyObjectScriptCode.Replace("{%UID%}", uid.Replace("-", "_"));
+                    }
+                    if (tabControlEditor.TabPages.ContainsKey(uid))
+                    {
+                        tabControlEditor.SelectedIndex = tabControlEditor.TabPages.IndexOfKey(uid);
+                    }
+                    else
+                    {
+                        tabControlMain.SelectedTab = TabPageCode;
+                        tabControlEditor.SelectedTab = AddEditorTabPage(key, dataManager.ObjectScripts[key], uid);
+                    }
+                }
+            }
+        }
+
+        #endregion
 
         #region Menu
 
@@ -273,32 +370,8 @@ Used components:
 
         private void errorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            tabControl1.SelectedTab = TabPageCode;
+            tabControlMain.SelectedTab = TabPageCode;
             tabControlEditor.SelectedIndex = 0;
-        }
-
-        #endregion
-
-        #region Treeview
-
-        private void treeViewOverview_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-            addToolStripMenuItem.Enabled = (treeViewOverview.SelectedNode != null);
-            if (treeViewOverview.SelectedNode != null && treeViewOverview.SelectedNode.Parent != null)
-            {
-                editToolStripMenuItem.Enabled = removeToolStripMenuItem.Enabled = (treeViewOverview.SelectedNode.Parent.Text == "Objects");
-                if (treeViewOverview.SelectedNode.Tag != null)
-                {
-                    treeViewOverview.LabelEdit = true;
-                    treeViewOverview.SelectedNode.BeginEdit();
-                }
-            }
-        }
-
-        private void treeViewOverview_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
-        {
-            treeViewOverview.LabelEdit = false;
-            dataManager.Update();
         }
 
         #endregion
@@ -359,14 +432,12 @@ Used components:
                     {
                         tabControlEditor.SelectedTab.Tag = avalonEditor.Text;
                         dataManager.data = MHD.Content.Level.Converter.XMLToData(avalonEditor.Text, false);
-                        errorToolStripMenuItem.Visible = false;
-                        errorToolStripMenuItem2.Visible = false;
+                        errorToolStripMenuItem.Visible = errorToolStripMenuItem2.Visible = false;
                     }
                     catch
                     {
                         dataManager.data = null;
-                        errorToolStripMenuItem.Visible = true;
-                        errorToolStripMenuItem2.Visible = true;
+                        errorToolStripMenuItem.Visible = errorToolStripMenuItem2.Visible = true;
                     }
                 }
                 else if (tabControlEditor.SelectedTab.Text == "level.cs")
@@ -383,7 +454,7 @@ Used components:
 
         #region TabControl
 
-        private TabPage AddTabPage(string title, string content, string key = null)
+        private TabPage AddEditorTabPage(string title, string content, string key = null)
         {
             TabPage page = new TabPage(title);
             page.Tag = content;
@@ -392,11 +463,11 @@ Used components:
             return page;
         }
 
-        private void InitTabPages()
+        private void InitEditorTabPages()
         {
             tabControlEditor.TabPages.Clear();
-            AddTabPage("level.xml", MHD.Content.Level.Converter.DataToXML(dataManager.data));
-            AddTabPage("level.cs", dataManager.LevelScript);
+            AddEditorTabPage("level.xml", MHD.Content.Level.Converter.DataToXML(dataManager.data));
+            AddEditorTabPage("level.cs", dataManager.LevelScript);
             tabControlEditor.SelectedIndex = 1;
         }
 
@@ -419,36 +490,6 @@ Used components:
             }
         }
 
-        private void treeViewOverview_DoubleClick(object sender, EventArgs e)
-        {
-            if (treeViewOverview.SelectedNode != null && treeViewOverview.SelectedNode.Text.EndsWith(".cs"))
-            {
-                if (treeViewOverview.SelectedNode.Text == "level.cs")
-                {
-                    tabControl1.SelectedTab = TabPageCode;
-                    tabControlEditor.SelectedIndex = 1;
-                }
-                else
-                {
-                    string key = treeViewOverview.SelectedNode.Text;
-                    string uid = key.Replace(".cs", "");
-                    if (!dataManager.ObjectScripts.ContainsKey(key))
-                    {
-                        dataManager.ObjectScripts[key] = Static.StaticStrings.EmptyObjectScriptCode.Replace("{%UID%}", uid.Replace("-", "_"));
-                    }
-                    if (tabControlEditor.TabPages.ContainsKey(uid))
-                    {
-                        tabControlEditor.SelectedIndex = tabControlEditor.TabPages.IndexOfKey(uid);
-                    }
-                    else
-                    {
-                        tabControl1.SelectedTab = TabPageCode;
-                        tabControlEditor.SelectedTab = AddTabPage(key, dataManager.ObjectScripts[key], uid);
-                    }
-                }
-            }
-        }
-
         #endregion
 
         #region Menu
@@ -464,7 +505,6 @@ Used components:
         }
 
         #endregion
-
 
         #endregion
 

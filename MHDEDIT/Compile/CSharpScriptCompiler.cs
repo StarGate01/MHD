@@ -8,6 +8,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CSharp;
+using System.Resources;
+using System.IO;
 
 #endregion
 
@@ -26,21 +28,22 @@ namespace MHDEDIT.Compile
             m_codeCompiler = CSharpCodeProvider.CreateProvider("cs", compilerParameters);
         }
 
-        public void CompileAndSave(ScriptFile m_currentFile)
+        public void CompileAndSave(ScriptFile m_currentFile, string [] codePagePaths, string xmlRes, bool addpdb, string fileName)
         {
             CompilerParameters compilerParameters = new CompilerParameters();
             compilerParameters.GenerateExecutable = false;
             compilerParameters.GenerateInMemory = false;
-            compilerParameters.IncludeDebugInformation = true;
-            compilerParameters.OutputAssembly = "Level.dll";
+            compilerParameters.IncludeDebugInformation = addpdb;
+            compilerParameters.OutputAssembly = fileName;
             compilerParameters.ReferencedAssemblies.AddRange( m_currentFile.ReferencedAssemblies.ToArray());
-
-            CompilerResults results = m_codeCompiler.CompileAssemblyFromSource(compilerParameters,  m_currentFile.ScriptContent);
+            using (ResourceWriter writer = new ResourceWriter("resources.resx")) writer.AddResource("level.xml.gzip", MHD.Content.Level.Compression.CompressString(System.IO.File.ReadAllText(xmlRes)));
+            compilerParameters.EmbeddedResources.Add("resources.resx");
+            CompilerResults results = m_codeCompiler.CompileAssemblyFromFile(compilerParameters, codePagePaths);
             if (results.Errors.Count > 0)
             {
                 StringBuilder compilerErrors = new StringBuilder();
                 foreach (CompilerError actError in results.Errors) compilerErrors.Append(
-                    "(" + actError.Line.ToString() + "," + actError.Column.ToString() + ")" + actError.ErrorText + Environment.NewLine
+                    actError.FileName + " (" + actError.Line.ToString() + "," + actError.Column.ToString() + ")" + actError.ErrorText + Environment.NewLine
                 );
                 throw new InvalidOperationException("Unable to compile scripts: " + Environment.NewLine + compilerErrors.ToString());
             }
@@ -48,6 +51,7 @@ namespace MHDEDIT.Compile
             {
                 throw new InvalidOperationException("Unable to compile scripts:" + Environment.NewLine + "No result assembly from compiler!");
             }
+            File.Delete("resources.resx");
         }
 
     }

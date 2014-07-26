@@ -106,6 +106,12 @@
   <ItemGroup>
     <Compile Include="Compile\CSharpScriptCompiler.cs" />
     <Compile Include="Compile\ScriptFile.cs" />
+    <Compile Include="FormCompileErrors.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCompileErrors.Designer.cs">
+      <DependentUpon>FormCompileErrors.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormMain.cs">
       <SubType>Form</SubType>
     </Compile>

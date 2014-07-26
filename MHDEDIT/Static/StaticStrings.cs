@@ -20,21 +20,28 @@ using SharpDX.DirectInput;
 using SharpDX.DirectWrite;
 using MHD;
 
-public class ObjectScript_{%UID%}: MHD.Gameplay.Objects.GameObject
+namespace MHD.Content.Level.Data.Scrips
 {
 
-    public ObjectScript(PathGeometry bounds, float rotation, MHD.Gameplay.Objects.GameObject.ColorInfo color): base(bounds, rotation, color) {}
-
-    public void Update(TimeSpan totalGameTime, TimeSpan timeSinceLastFrame, MHD.Input.InputProvider inputProvider, Matrix3x2 worldTransform, Matrix3x2 viewTransform)
+    public class ObjectScript_{%UID%}: MHD.Gameplay.Objects.GameObject
     {
-        
-        base.Update(totalGameTime, timeSinceLastFrame, inputProvider, worldTransform, viewTransform);
-    }
 
-    public void Render(RenderTarget renderTarget2D, Matrix3x2 viewTransform)
-    {
+        public string UID = " + "\"{%UID%}\"" + @";
+
+        public ObjectScript_{%UID%}(PathGeometry bounds, float rotation, MHD.Gameplay.Objects.GameObject.ColorInfo color): base(bounds, rotation, color) {}
+
+        public override void Update(TimeSpan totalGameTime, TimeSpan timeSinceLastFrame, MHD.Input.InputProvider inputProvider, Matrix3x2 worldTransform, Matrix3x2 viewTransform)
+        {
         
-        base.Render(renderTarget2D, viewTransform);
+            base.Update(totalGameTime, timeSinceLastFrame, inputProvider, worldTransform, viewTransform);
+        }
+
+        public override void Render(RenderTarget renderTarget2D, Matrix3x2 viewTransform)
+        {
+        
+            base.Render(renderTarget2D, viewTransform);
+        }
+
     }
 
 }";
@@ -43,19 +50,39 @@ public class ObjectScript_{%UID%}: MHD.Gameplay.Objects.GameObject
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
+using System.Reflection;
 using MHD;
 
-public class LevelScript: MHD.Content.Level.ILevelScript
+namespace MHD.Content.Level.Data.Scrips
 {
 
-    public MHD.Content.Level.Data.Root GetData()
+    public class LevelScript: MHD.Content.Level.ILevelScript
     {
-        
-    }
+
+    	private MHD.Content.Level.Data.Root data;
+    	
+        public MHD.Content.Level.Data.Root GetData()
+        {
+            try
+            {
+				Assembly assembly = Assembly.GetExecutingAssembly();
+				StreamReader streamReader = new StreamReader(assembly.GetManifestResourceStream(" + "\"level.xml.gzip\"" + @"));
+				data = MHD.Content.Level.Converter.XMLToData(MHD.Content.Level.Compression.DecompressString(streamReader.ReadToEnd()));
+				return data;
+            }
+            catch
+            {
+            	data = null;
+            }
+            return data;
+        }
     
-    public MHD.Gameplay.Objects.GameObject GetObject(string UID)
-    {
-        
+        public MHD.Content.Level.Data.Object GetObject(string UID)
+        {
+            return data.Objects.Find(el => el.UID == UID);
+        }
+
     }
 
 }";

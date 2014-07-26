@@ -10,8 +10,8 @@ namespace MHD.Content.Level
     {
 
         Data.Root GetData();
-      
-        Gameplay.Objects.GameObject GetObject(string UID);
+
+        Data.Object GetObject(string UID);
 
     }
 
