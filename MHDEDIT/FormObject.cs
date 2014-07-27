@@ -39,7 +39,7 @@ namespace MHDEDIT
         {
             textBoxStartPositionX.Text = objnew.StartPosition.X.ToString();
             textBoxStartPositionY.Text = objnew.StartPosition.Y.ToString();
-            textBoxStartRotation.Text = (objnew.StartRotation / Math.PI * 180).ToString();
+            textBoxStartRotation.Text = Math.Round(objnew.StartRotation / Math.PI * 180, 2).ToString();
             textBoxFillColorAlpha.Text = objnew.Geometry.FillColor.A.ToString();
             buttonFillColor.BackColor = Color.FromArgb(objnew.Geometry.FillColor.R, objnew.Geometry.FillColor.G, objnew.Geometry.FillColor.B);
             textBoxStrokeColorAlpha.Text = Result.Geometry.StrokeColor.A.ToString();
@@ -68,6 +68,7 @@ namespace MHDEDIT
                 B = buttonStrokeColor.BackColor.B
             };
             Result.Geometry.StrokeWidth = Convert.ToSingle(textBoxStrokeWidth.Text);
+            Result.Geometry.Points.Clear();
             foreach (object item in listBoxPoints.Items) Result.Geometry.Points.Add(new MHD.Content.Level.Data.Point() { X = ((PointF)item).X, Y = ((PointF)item).Y });
         }
 
@@ -180,8 +181,8 @@ namespace MHDEDIT
                 PointF[] points = listBoxPoints.Items.Cast<PointF>().ToArray();
                 e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
                 Matrix transformMatrix = new Matrix();
-                transformMatrix.Translate(panelRender.Width / 2, panelRender.Height / 2);
-                transformMatrix.Rotate(Convert.ToSingle(textBoxStartRotation.Text));
+                transformMatrix.Rotate(Convert.ToSingle(textBoxStartRotation.Text), MatrixOrder.Append); 
+                transformMatrix.Translate(panelRender.Width / 2, panelRender.Height / 2, MatrixOrder.Append);
                 e.Graphics.Transform = transformMatrix;
                 e.Graphics.FillPolygon(new SolidBrush(buttonFillColor.BackColor), points);
                 e.Graphics.DrawPolygon(new Pen(buttonStrokeColor.BackColor, Convert.ToSingle(textBoxStrokeWidth.Text)), points);

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -81,7 +82,7 @@ namespace MHDEDIT
                     treeViewOverview.Nodes.Clear();
                 }
             }
-            if (tabControlMain.SelectedTab == TabPageCode && dataManager.data != null)
+            if ((tabControlMain.SelectedTab == TabPageCode || tabControlMain.SelectedTab == TabPageRender) && dataManager.data != null)
             {
                 dataManager.Update();
                 tabControlEditor.TabPages[0].Tag = MHD.Content.Level.Converter.DataToXML(dataManager.data);
@@ -279,7 +280,7 @@ Used components:
             List<string> codePages = System.IO.Directory.GetFiles(Path.Combine(lastSavePath, "objectscripts"), "*.cs").ToList();
             codePages.Add(Path.Combine(lastSavePath, "level.cs"));
             CompilerErrorCollection errors = m_scriptCompiler.Value.CompileAndSave(m_currentFile, codePages.ToArray(), Path.Combine(lastSavePath, "level.xml"), addPDBfile, saveFileDialogCompile.FileName);
-            if(errors.Count > 0)
+            if (errors.Count > 0)
             {
                 FormCompileErrors errorForm = new FormCompileErrors(errors);
                 errorForm.ShowDialog(this);
@@ -296,9 +297,14 @@ Used components:
 
         #region Treeview
 
+        private void copyTextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(treeViewOverview.SelectedNode.Text);
+        }
+
         private void treeViewOverview_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            addToolStripMenuItem.Enabled = (treeViewOverview.SelectedNode != null);
+            addToolStripMenuItem.Enabled = copyTextToolStripMenuItem.Enabled = (treeViewOverview.SelectedNode != null);
             if (treeViewOverview.SelectedNode != null && treeViewOverview.SelectedNode.Parent != null)
             {
                 editToolStripMenuItem.Enabled = removeToolStripMenuItem.Enabled = (treeViewOverview.SelectedNode.Parent.Text == "Objects");
@@ -316,25 +322,30 @@ Used components:
             dataManager.Update();
         }
 
-        private void treeViewOverview_DoubleClick(object sender, EventArgs e)
+        private void treeViewOverview_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            if (treeViewOverview.SelectedNode != null && treeViewOverview.SelectedNode.Text.EndsWith(".cs"))
+            treeViewOverview.SelectedNode = e.Node;
+        }
+
+        private void treeViewOverview_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if(e.Node.Text.EndsWith(".cs"))
             {
-                if (treeViewOverview.SelectedNode.Text == "level.cs")
+                if (e.Node.Text == "level.cs")
                 {
                     tabControlMain.SelectedTab = TabPageCode;
                     tabControlEditor.SelectedIndex = 1;
                 }
                 else
                 {
-                    string key = treeViewOverview.SelectedNode.Text;
+                    string key = e.Node.Text;
                     string uid = key.Replace(".cs", "");
                     if (!dataManager.ObjectScripts.ContainsKey(key))
                     {
                         dataManager.ObjectScripts[key] = Static.StaticStrings.EmptyObjectScriptCode.Replace("{%UID%}", uid.Replace("-", "_"));
                     }
                     int isFileOpen = -1;
-                    foreach(TabPage page in  tabControlEditor.TabPages)
+                    foreach (TabPage page in tabControlEditor.TabPages)
                     {
                         if (page.Text == key) { isFileOpen = tabControlEditor.TabPages.IndexOf(page); break; }
                     }
@@ -371,7 +382,7 @@ Used components:
             MHD.Content.Level.Data.Object obj = new MHD.Content.Level.Data.Object();
             obj.Script = obj.UID + ".cs";
             FormObject objectEditor = new FormObject(obj);
-            if(objectEditor.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
+            if (objectEditor.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
             {
                 dataManager.data.Objects.Add(objectEditor.Result);
                 dataManager.Refresh();
@@ -379,6 +390,16 @@ Used components:
                 tNode.EnsureVisible();
                 treeViewOverview.SelectedNode = tNode;
             }
+        }
+
+        private void addToolStripMenuItem_MouseEnter(object sender, EventArgs e)
+        {
+            addToolStripMenuItem.ShowDropDown();
+        }
+
+        private void addEmptyToolStripMenuItem_MouseLeave(object sender, EventArgs e)
+        {
+            addToolStripMenuItem.HideDropDown();
         }
 
         private void addEmptyToolStripMenuItem_Click(object sender, EventArgs e)
@@ -396,14 +417,15 @@ Used components:
         private void editToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string uid = "";
-            foreach(TreeNode node in treeViewOverview.SelectedNode.Nodes) if(node.Text == "UID") uid = node.Nodes[0].Text;
+            TreeNode selected = treeViewOverview.SelectedNode;
+            foreach (TreeNode node in treeViewOverview.SelectedNode.Nodes) if (node.Text == "UID") { uid = node.Nodes[0].Text; break; }
             MHD.Content.Level.Data.Object obj = dataManager.data.Objects.FirstOrDefault(el => el.UID == uid);
-            if(obj != null)
+            if (obj != null)
             {
                 FormObject objectEditor = new FormObject(obj);
-                obj = objectEditor.Result;
                 if (objectEditor.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
                 {
+                    obj = objectEditor.Result;
                     dataManager.Refresh();
                     dataManager.SetInit();
                 }
@@ -576,6 +598,54 @@ Used components:
         }
 
         #endregion
+
+        #endregion
+
+        #region Render
+
+
+        private void resetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            trackBarRenderZoom.Value = 0;
+            panelRender.Invalidate();
+        }
+
+        private void trackBarRenderZoom_Scroll(object sender, EventArgs e)
+        {
+            panelRender.Invalidate();
+        }
+
+        private void panelRender_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            if (dataManager.data != null)
+            {
+                float scale = 1;
+                if (trackBarRenderZoom.Value > 0) scale = (float)trackBarRenderZoom.Value + 1;
+                else if (trackBarRenderZoom.Value < 0) scale = 1 / (Math.Abs((float)trackBarRenderZoom.Value) + 1);
+                foreach (MHD.Content.Level.Data.Object obj in dataManager.data.Objects)
+                {
+                    PointF[] points = obj.Geometry.Points.Select<MHD.Content.Level.Data.Point, System.Drawing.PointF>(el => new System.Drawing.Point((int)el.X, (int)el.Y)).ToArray();
+                    System.Drawing.Drawing2D.Matrix transformMatrix = new System.Drawing.Drawing2D.Matrix();
+                    transformMatrix.Rotate(obj.StartRotation / (float)Math.PI * 180, MatrixOrder.Append);
+                    transformMatrix.Translate(obj.StartPosition.X, obj.StartPosition.Y, MatrixOrder.Append);
+                    transformMatrix.Scale(scale, scale, MatrixOrder.Append);
+                    transformMatrix.Translate(panelRender.Width / 2, panelRender.Height / 2, MatrixOrder.Append);
+                    e.Graphics.Transform = transformMatrix;
+                    e.Graphics.FillPolygon(new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(obj.Geometry.FillColor.R, obj.Geometry.FillColor.G, obj.Geometry.FillColor.B)), points);
+                    e.Graphics.DrawPolygon(new System.Drawing.Pen(System.Drawing.Color.FromArgb(obj.Geometry.StrokeColor.R, obj.Geometry.StrokeColor.G, obj.Geometry.StrokeColor.B), obj.Geometry.StrokeWidth), points);
+                }
+                System.Drawing.Drawing2D.Matrix transformMatrixPlayer = new System.Drawing.Drawing2D.Matrix();
+                transformMatrixPlayer.Rotate(dataManager.data.Player.StartRotation / (float)Math.PI * 180, MatrixOrder.Append);
+                transformMatrixPlayer.Translate(dataManager.data.Player.StartPosition.X, dataManager.data.Player.StartPosition.Y, MatrixOrder.Append);
+                transformMatrixPlayer.Scale(scale, scale, MatrixOrder.Append);
+                transformMatrixPlayer.Translate(panelRender.Width / 2, panelRender.Height / 2, MatrixOrder.Append);
+                e.Graphics.Transform = transformMatrixPlayer;
+                e.Graphics.FillRectangle(new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(170, 47, 47)), -25, -25, 50, 50);
+                e.Graphics.FillRectangle(new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(220, 220, 220)), -5, -25, 10, 25);
+                e.Graphics.DrawRectangle(new System.Drawing.Pen(System.Drawing.Color.FromArgb(220, 220, 220), 2), -25, -25, 50, 50);
+            }
+        }
 
         #endregion
 

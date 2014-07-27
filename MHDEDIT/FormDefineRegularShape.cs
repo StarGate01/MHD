@@ -49,6 +49,11 @@ namespace MHDEDIT
             panelRender.Invalidate();
         }
 
+        private void numericUpDownCorners_KeyDown(object sender, KeyEventArgs e)
+        {
+            panelRender.Invalidate();
+        }
+
         private void panelRender_Paint(object sender, PaintEventArgs e)
         {
             try

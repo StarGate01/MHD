@@ -37,12 +37,12 @@ namespace MHD.Content.Level.Data
     public class TouchObjectCondition
     {
         public bool Enabled = true;
-        public string ObjectUID = "";
+        public string ObjectUID = "guid";
     }
 
     public class ScriptCondition
     {
-        public bool Enabled = true;
+        public bool Enabled = false;
         public string Script = "level.cs";
     }
 
@@ -78,9 +78,9 @@ namespace MHD.Content.Level.Data
 
     public class Color
     {
-        public byte R = 0;
-        public byte G = 0;
-        public byte B = 0;
+        public byte R = 255;
+        public byte G = 255;
+        public byte B = 255;
         public byte A = 255;
     }
 

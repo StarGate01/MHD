@@ -4,7 +4,7 @@ using System.Collections;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace System.Windows.Forms
+namespace MHDEDIT
 {
 
     public class UserSortableListBox : ListBox
@@ -69,7 +69,7 @@ namespace System.Windows.Forms
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
-            if (e.Button == Forms.MouseButtons.Right) return;
+            if (e.Button == MouseButtons.Right) return;
             if (e.Clicks == 2) return;
             if (SelectedItem == null) return;
             sourceIndex = SelectedIndex;

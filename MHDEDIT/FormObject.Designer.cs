@@ -63,7 +63,7 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.listBoxPoints = new System.Windows.Forms.UserSortableListBox();
+            this.listBoxPoints = new MHDEDIT.UserSortableListBox();
             this.groupBox1.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -318,7 +318,7 @@
             // 
             // panelRender
             // 
-            this.panelRender.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.panelRender.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.panelRender.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelRender.Location = new System.Drawing.Point(237, 19);
             this.panelRender.Name = "panelRender";
@@ -410,7 +410,7 @@
             this.listBoxPoints.Name = "listBoxPoints";
             this.listBoxPoints.Size = new System.Drawing.Size(210, 277);
             this.listBoxPoints.TabIndex = 12;
-            this.listBoxPoints.Reorder += new System.Windows.Forms.UserSortableListBox.ReorderHandler(this.listBoxPoints_Reorder);
+            this.listBoxPoints.Reorder += new MHDEDIT.UserSortableListBox.ReorderHandler(this.listBoxPoints_Reorder);
             this.listBoxPoints.SelectedIndexChanged += new System.EventHandler(this.listBoxPoints_SelectedIndexChanged);
             this.listBoxPoints.DoubleClick += new System.EventHandler(this.listBoxPoints_DoubleClick);
             // 
@@ -482,7 +482,7 @@
         private System.Windows.Forms.ColorDialog colorDialog1;
         private System.Windows.Forms.TextBox textBoxStrokeColorAlpha;
         private System.Windows.Forms.TextBox textBoxFillColorAlpha;
-        private System.Windows.Forms.UserSortableListBox listBoxPoints;
+        private UserSortableListBox listBoxPoints;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label6;
 

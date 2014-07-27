@@ -90,11 +90,6 @@
             // numericUpDownCorners
             // 
             this.numericUpDownCorners.Location = new System.Drawing.Point(196, 39);
-            this.numericUpDownCorners.Minimum = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
             this.numericUpDownCorners.Name = "numericUpDownCorners";
             this.numericUpDownCorners.Size = new System.Drawing.Size(134, 20);
             this.numericUpDownCorners.TabIndex = 1;
@@ -104,6 +99,7 @@
             0,
             0});
             this.numericUpDownCorners.ValueChanged += new System.EventHandler(this.numericUpDownCorners_ValueChanged);
+            this.numericUpDownCorners.KeyDown += new System.Windows.Forms.KeyEventHandler(this.numericUpDownCorners_KeyDown);
             // 
             // textBoxRadius
             // 
