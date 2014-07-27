@@ -38,7 +38,6 @@
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.compileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.compileWithDebugFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.referenceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -63,9 +62,14 @@
             this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.errorToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripTextBoxSearch = new System.Windows.Forms.ToolStripTextBox();
+            this.nextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.TabPageRender = new System.Windows.Forms.TabPage();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.saveFileDialogCompile = new System.Windows.Forms.SaveFileDialog();
+            this.compileWithDebugFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.addEmptyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStripMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.TabPageStructure.SuspendLayout();
@@ -96,6 +100,8 @@
             this.saveAsToolStripMenuItem,
             this.toolStripSeparator1,
             this.compileToolStripMenuItem,
+            this.compileWithDebugFileToolStripMenuItem,
+            this.toolStripSeparator2,
             this.testToolStripMenuItem});
             this.levelToolStripMenuItem.Name = "levelToolStripMenuItem";
             this.levelToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
@@ -146,22 +152,13 @@
             // 
             // compileToolStripMenuItem
             // 
-            this.compileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.compileWithDebugFileToolStripMenuItem});
             this.compileToolStripMenuItem.Image = global::MHDEDIT.Properties.Resources.BuildSolution_104;
             this.compileToolStripMenuItem.Name = "compileToolStripMenuItem";
+            this.compileToolStripMenuItem.ShortcutKeyDisplayString = "Strg+C";
             this.compileToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this.compileToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.compileToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
             this.compileToolStripMenuItem.Text = "&Compile";
             this.compileToolStripMenuItem.Click += new System.EventHandler(this.compileToolStripMenuItem_Click);
-            // 
-            // compileWithDebugFileToolStripMenuItem
-            // 
-            this.compileWithDebugFileToolStripMenuItem.Image = global::MHDEDIT.Properties.Resources.BuildSolution_104;
-            this.compileWithDebugFileToolStripMenuItem.Name = "compileWithDebugFileToolStripMenuItem";
-            this.compileWithDebugFileToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
-            this.compileWithDebugFileToolStripMenuItem.Text = "Compile with debug file";
-            this.compileWithDebugFileToolStripMenuItem.Click += new System.EventHandler(this.compileWithDebugFileToolStripMenuItem_Click);
             // 
             // testToolStripMenuItem
             // 
@@ -278,6 +275,8 @@
             // 
             // addToolStripMenuItem
             // 
+            this.addToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addEmptyToolStripMenuItem});
             this.addToolStripMenuItem.Enabled = false;
             this.addToolStripMenuItem.Image = global::MHDEDIT.Properties.Resources.AddMark_10580;
             this.addToolStripMenuItem.Name = "addToolStripMenuItem";
@@ -346,7 +345,7 @@
             this.TabPageCode.Location = new System.Drawing.Point(4, 22);
             this.TabPageCode.Name = "TabPageCode";
             this.TabPageCode.Padding = new System.Windows.Forms.Padding(3);
-            this.TabPageCode.Size = new System.Drawing.Size(723, 335);
+            this.TabPageCode.Size = new System.Drawing.Size(987, 626);
             this.TabPageCode.TabIndex = 1;
             this.TabPageCode.Text = "Code";
             this.TabPageCode.UseVisualStyleBackColor = true;
@@ -356,9 +355,9 @@
             this.panelEditor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelEditor.Controls.Add(this.elementHostEditor);
             this.panelEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelEditor.Location = new System.Drawing.Point(3, 48);
+            this.panelEditor.Location = new System.Drawing.Point(3, 51);
             this.panelEditor.Name = "panelEditor";
-            this.panelEditor.Size = new System.Drawing.Size(717, 284);
+            this.panelEditor.Size = new System.Drawing.Size(981, 572);
             this.panelEditor.TabIndex = 2;
             // 
             // elementHostEditor
@@ -366,7 +365,7 @@
             this.elementHostEditor.Dock = System.Windows.Forms.DockStyle.Fill;
             this.elementHostEditor.Location = new System.Drawing.Point(0, 0);
             this.elementHostEditor.Name = "elementHostEditor";
-            this.elementHostEditor.Size = new System.Drawing.Size(715, 282);
+            this.elementHostEditor.Size = new System.Drawing.Size(979, 570);
             this.elementHostEditor.TabIndex = 0;
             this.elementHostEditor.Text = "elementHost1";
             this.elementHostEditor.Child = null;
@@ -375,10 +374,10 @@
             // 
             this.tabControlEditor.Dock = System.Windows.Forms.DockStyle.Top;
             this.tabControlEditor.ImageList = this.imageListOverview;
-            this.tabControlEditor.Location = new System.Drawing.Point(3, 27);
+            this.tabControlEditor.Location = new System.Drawing.Point(3, 30);
             this.tabControlEditor.Name = "tabControlEditor";
             this.tabControlEditor.SelectedIndex = 0;
-            this.tabControlEditor.Size = new System.Drawing.Size(717, 21);
+            this.tabControlEditor.Size = new System.Drawing.Size(981, 21);
             this.tabControlEditor.TabIndex = 1;
             this.tabControlEditor.SelectedIndexChanged += new System.EventHandler(this.tabControlEditor_SelectedIndexChanged);
             // 
@@ -387,10 +386,12 @@
             this.menuStripCode.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.undoToolStripMenuItem,
             this.redoToolStripMenuItem,
-            this.errorToolStripMenuItem2});
+            this.errorToolStripMenuItem2,
+            this.toolStripTextBoxSearch,
+            this.nextToolStripMenuItem});
             this.menuStripCode.Location = new System.Drawing.Point(3, 3);
             this.menuStripCode.Name = "menuStripCode";
-            this.menuStripCode.Size = new System.Drawing.Size(717, 24);
+            this.menuStripCode.Size = new System.Drawing.Size(981, 27);
             this.menuStripCode.TabIndex = 1;
             this.menuStripCode.Text = "menuStrip2";
             // 
@@ -400,7 +401,7 @@
             this.undoToolStripMenuItem.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
             this.undoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-            this.undoToolStripMenuItem.Size = new System.Drawing.Size(64, 20);
+            this.undoToolStripMenuItem.Size = new System.Drawing.Size(64, 23);
             this.undoToolStripMenuItem.Text = "&Undo";
             this.undoToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.undoToolStripMenuItem.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
@@ -412,7 +413,7 @@
             this.redoToolStripMenuItem.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
             this.redoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
-            this.redoToolStripMenuItem.Size = new System.Drawing.Size(62, 20);
+            this.redoToolStripMenuItem.Size = new System.Drawing.Size(62, 23);
             this.redoToolStripMenuItem.Text = "&Redo";
             this.redoToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.redoToolStripMenuItem.Click += new System.EventHandler(this.redoToolStripMenuItem_Click);
@@ -424,16 +425,28 @@
             this.errorToolStripMenuItem2.Image = global::MHDEDIT.Properties.Resources.StatusAnnotations_Warning_32xLG_color;
             this.errorToolStripMenuItem2.Name = "errorToolStripMenuItem2";
             this.errorToolStripMenuItem2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.errorToolStripMenuItem2.Size = new System.Drawing.Size(145, 20);
+            this.errorToolStripMenuItem2.Size = new System.Drawing.Size(145, 23);
             this.errorToolStripMenuItem2.Text = "Error: Invalid markup";
             this.errorToolStripMenuItem2.Visible = false;
+            // 
+            // toolStripTextBoxSearch
+            // 
+            this.toolStripTextBoxSearch.Name = "toolStripTextBoxSearch";
+            this.toolStripTextBoxSearch.Size = new System.Drawing.Size(100, 23);
+            // 
+            // nextToolStripMenuItem
+            // 
+            this.nextToolStripMenuItem.Name = "nextToolStripMenuItem";
+            this.nextToolStripMenuItem.Size = new System.Drawing.Size(67, 23);
+            this.nextToolStripMenuItem.Text = "Find next";
+            this.nextToolStripMenuItem.Click += new System.EventHandler(this.nextToolStripMenuItem_Click);
             // 
             // TabPageRender
             // 
             this.TabPageRender.Location = new System.Drawing.Point(4, 22);
             this.TabPageRender.Name = "TabPageRender";
             this.TabPageRender.Padding = new System.Windows.Forms.Padding(3);
-            this.TabPageRender.Size = new System.Drawing.Size(723, 335);
+            this.TabPageRender.Size = new System.Drawing.Size(987, 626);
             this.TabPageRender.TabIndex = 0;
             this.TabPageRender.Text = "Render";
             this.TabPageRender.UseVisualStyleBackColor = true;
@@ -449,6 +462,29 @@
             this.saveFileDialogCompile.Filter = "Dynamic link library|*.dll";
             this.saveFileDialogCompile.Title = "Save compiled level";
             this.saveFileDialogCompile.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialogCompile_FileOk);
+            // 
+            // compileWithDebugFileToolStripMenuItem
+            // 
+            this.compileWithDebugFileToolStripMenuItem.Image = global::MHDEDIT.Properties.Resources.BuildSolution_104;
+            this.compileWithDebugFileToolStripMenuItem.Name = "compileWithDebugFileToolStripMenuItem";
+            this.compileWithDebugFileToolStripMenuItem.ShortcutKeyDisplayString = "Strg+Shift+C";
+            this.compileWithDebugFileToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.C)));
+            this.compileWithDebugFileToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
+            this.compileWithDebugFileToolStripMenuItem.Text = "Compile debugable";
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(251, 6);
+            // 
+            // addEmptyToolStripMenuItem
+            // 
+            this.addEmptyToolStripMenuItem.Image = global::MHDEDIT.Properties.Resources.AddMark_10580;
+            this.addEmptyToolStripMenuItem.Name = "addEmptyToolStripMenuItem";
+            this.addEmptyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.addEmptyToolStripMenuItem.Text = "Add empty";
+            this.addEmptyToolStripMenuItem.Click += new System.EventHandler(this.addEmptyToolStripMenuItem_Click);
             // 
             // FormMain
             // 
@@ -518,7 +554,11 @@
         private System.Windows.Forms.ToolStripMenuItem errorToolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem compileToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFileDialogCompile;
+        private System.Windows.Forms.ToolStripTextBox toolStripTextBoxSearch;
+        private System.Windows.Forms.ToolStripMenuItem nextToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem compileWithDebugFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem addEmptyToolStripMenuItem;
     }
 }
 

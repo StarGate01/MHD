@@ -96,6 +96,22 @@ namespace MHDEDIT
             dataManager.data = new MHD.Content.Level.Data.Root();
             dataManager.LevelScript = Static.StaticStrings.EmptyLevelScriptCode;
             dataManager.ObjectScripts = new Dictionary<string, string>();
+            dataManager.data.Meta.References.AddRange(new List<string>() {
+                "mscorlib.dll", 
+                "Microsoft.CSharp.dll", 
+                "System.dll", 
+                "System.Core.dll", 
+                "System.Data.dll", 
+                "System.Linq.dll", 
+                "System.Reflection.dll", 
+                "System.IO.dll", 
+                "SharpDX.dll", 
+                "SharpDX.Direct3D11.dll", 
+                "SharpDX.Direct2D1.dll", 
+                "SharpDX.DirectInput.dll",  
+                "MHD.exe"
+            });
+            foreach (string reference in dataManager.data.Meta.References) m_currentFile.ReferencedAssemblies.Add(reference);
             if (!SaveAs())
             {
                 dataManager.data = null;
@@ -107,6 +123,7 @@ namespace MHDEDIT
                 dataManager.SetInit();
                 tabControlMain.SelectedTab = TabPageStructure;
                 InitEditorTabPages();
+                referenceToolStripMenuItem.Enabled = true;
             }
             this.Cursor = Cursors.Default;
         }
@@ -123,6 +140,7 @@ namespace MHDEDIT
                     dataManager.data = MHD.Content.Level.Converter.XMLToData(Path.Combine(lastSavePath, "level.xml"));
                     dataManager.LevelScript = System.IO.File.ReadAllText(Path.Combine(lastSavePath, "level.cs"));
                     dataManager.ObjectScripts = new Dictionary<string, string>();
+                    foreach (string reference in dataManager.data.Meta.References) m_currentFile.ReferencedAssemblies.Add(reference);
                     foreach (string file in System.IO.Directory.GetFiles(Path.Combine(lastSavePath, "objectscripts")))
                     {
                         dataManager.ObjectScripts.Add(file.Substring(file.LastIndexOf("\\") + 1), System.IO.File.ReadAllText(file));
@@ -131,6 +149,7 @@ namespace MHDEDIT
                     dataManager.SetInit();
                     tabControlMain.SelectedTab = TabPageStructure;
                     InitEditorTabPages();
+                    referenceToolStripMenuItem.Enabled = true;
                 }
                 catch (Exception ex)
                 {
@@ -219,9 +238,10 @@ By Christoph Honal
 
 Used components:
  - SharpDX
- - AvalonEdit
+ - AvalonEdit by SharpDeleop
  - SharpDevelopCodeCompletion
- - VS 2013 Image Library
+ - Visual Studio 2013 Image Library
+ - UserSortableListBox by synek317@codeproject.org
 ", "MHDEDIT - Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
@@ -313,9 +333,15 @@ Used components:
                     {
                         dataManager.ObjectScripts[key] = Static.StaticStrings.EmptyObjectScriptCode.Replace("{%UID%}", uid.Replace("-", "_"));
                     }
-                    if (tabControlEditor.TabPages.ContainsKey(uid))
+                    int isFileOpen = -1;
+                    foreach(TabPage page in  tabControlEditor.TabPages)
                     {
-                        tabControlEditor.SelectedIndex = tabControlEditor.TabPages.IndexOfKey(uid);
+                        if (page.Text == key) { isFileOpen = tabControlEditor.TabPages.IndexOf(page); break; }
+                    }
+                    if (isFileOpen != -1)
+                    {
+                        tabControlEditor.SelectedIndex = isFileOpen;
+                        tabControlMain.SelectedTab = TabPageCode;
                     }
                     else
                     {
@@ -344,8 +370,24 @@ Used components:
         {
             MHD.Content.Level.Data.Object obj = new MHD.Content.Level.Data.Object();
             obj.Script = obj.UID + ".cs";
+            FormObject objectEditor = new FormObject(obj);
+            if(objectEditor.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
+            {
+                dataManager.data.Objects.Add(obj);
+                dataManager.Refresh();
+                TreeNode tNode = treeViewOverview.Nodes[0].Nodes[2].Nodes[dataManager.data.Objects.Count - 1];
+                tNode.EnsureVisible();
+                treeViewOverview.SelectedNode = tNode;
+            }
+        }
+
+        private void addEmptyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MHD.Content.Level.Data.Object obj = new MHD.Content.Level.Data.Object();
+            obj.Script = obj.UID + ".cs";
             dataManager.data.Objects.Add(obj);
             dataManager.Refresh();
+            dataManager.SetInit();
             TreeNode tNode = treeViewOverview.Nodes[0].Nodes[2].Nodes[dataManager.data.Objects.Count - 1];
             tNode.EnsureVisible();
             treeViewOverview.SelectedNode = tNode;
@@ -353,7 +395,19 @@ Used components:
 
         private void editToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            dataManager.Update();
+            string uid = "";
+            foreach(TreeNode node in treeViewOverview.SelectedNode.Nodes) if(node.Text == "UID") uid = node.Nodes[0].Text;
+            MHD.Content.Level.Data.Object obj = dataManager.data.Objects.FirstOrDefault(el => el.UID == uid);
+            if(obj != null)
+            {
+                FormObject objectEditor = new FormObject(obj);
+                obj = objectEditor.obj;
+                if (objectEditor.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
+                {
+                    dataManager.Refresh();
+                    dataManager.SetInit();
+                }
+            }
         }
 
         private void removeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -503,6 +557,22 @@ Used components:
         private void redoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             avalonEditor.Undo();
+        }
+
+        private void nextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Search(toolStripTextBoxSearch.Text, avalonEditor.SelectionStart + avalonEditor.SelectionLength);
+        }
+
+        private void Search(string query, int start, bool cancel = false)
+        {
+            int index = avalonEditor.Text.IndexOf(query, start);
+            if (index == -1 && !cancel) Search(query, 0, true);
+            if (index != -1)
+            {
+                avalonEditor.Select(index, query.Length);
+                avalonEditor.ScrollToLine(avalonEditor.TextArea.Document.GetLineByOffset(index).LineNumber);
+            }
         }
 
         #endregion

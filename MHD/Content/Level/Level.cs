@@ -46,25 +46,28 @@ namespace MHD.Content.Level
         public static TreeNode DataToNode(object obj, object rootInfo = null)
         {
             Type objType = obj.GetType();
+            string fieldName = objType.Name;
+            bool value = false;
+            if (rootInfo != null && !bool.TryParse(rootInfo.ToString(), out value)) fieldName = ((FieldInfo)rootInfo).Name;
             TreeNode node;
             if (!objType.IsPrimitive && !objType.Equals(typeof(string)))
             {
                 if (rootInfo != null)
                 {
-                    if (objType.Equals(typeof(Player))) { node = new TreeNode(objType.Name, 4, 4); }
+                    if (objType.Equals(typeof(Player))) { node = new TreeNode(fieldName, 4, 4); }
                     else if (objType.IsGenericType && objType.GetGenericTypeDefinition() == typeof(List<>))
                     {
                         Type itemType = objType.GetGenericArguments()[0];
                         Type constructedListType = typeof(List<>).MakeGenericType(itemType);
                         IList listInstance = (IList)Activator.CreateInstance(constructedListType, new object[] { obj });
-                        node = new TreeNode(((FieldInfo)rootInfo).Name, 0, 1);
+                        node = new TreeNode(fieldName, 0, 1);
                         foreach (object obj2 in listInstance)
                         {
                             node.Nodes.Add(DataToNode(obj2, true));
                         }
                         return node;
                     }
-                    else { node = new TreeNode(objType.Name, 3, 3); }
+                    else { node = new TreeNode(fieldName, 3, 3); }
                 }
                 else node = new TreeNode("Level", 2, 2);
                 foreach (FieldInfo info in objType.GetFields())
@@ -76,13 +79,20 @@ namespace MHD.Content.Level
             }
             else
             {
-                node = new TreeNode(((FieldInfo)rootInfo).Name, 3, 3);
-                string text = obj.ToString();
-                int imageIndex = 7;
-                if (text.EndsWith(".cs")) imageIndex = 9;
-                TreeNode valueNode = new TreeNode(text, imageIndex, imageIndex);
-                if (node.Text != "UID" && !text.EndsWith(".cs")) valueNode.Tag = true;
-                node.Nodes.Add(valueNode);
+                if (bool.TryParse(rootInfo.ToString(), out value) && value)
+                {
+                    node = new TreeNode(obj.ToString(), 7, 7);
+                }
+                else
+                {
+                    node = new TreeNode(fieldName, 3, 3);
+                    string text = obj.ToString();
+                    int imageIndex = 7;
+                    if (text.EndsWith(".cs")) imageIndex = 9;
+                    TreeNode valueNode = new TreeNode(text, imageIndex, imageIndex);
+                    if (node.Text != "UID" && !text.EndsWith(".cs")) valueNode.Tag = true;
+                    node.Nodes.Add(valueNode);
+                }
             }
             return node;
         }
@@ -96,7 +106,14 @@ namespace MHD.Content.Level
                 Type itemType = dataType.GetGenericArguments()[0];
                 foreach (TreeNode node in nodes)
                 {
-                    ((IList)data).Add(NodeToData(node.Nodes, Activator.CreateInstance(itemType)));
+                    if (!itemType.IsPrimitive && !itemType.Equals(typeof(string)))
+                    {
+                        ((IList)data).Add(NodeToData(node.Nodes, Activator.CreateInstance(itemType)));
+                    }
+                    else
+                    {
+                         ((IList)data).Add(Convert.ChangeType((object)node.Text, itemType));
+                    }
                 }
                 return data;
             }

@@ -16,6 +16,7 @@ namespace MHD.Content.Level.Data
     public class Meta
     {
         public int Version = 1;
+        public List<string> References = new List<string>();
         public string Name = "level";
         public Objective Objective = new Objective();
     }
@@ -69,7 +70,18 @@ namespace MHD.Content.Level.Data
 
     public class Geometry
     {
-        public List<System.Drawing.Point> Points = new List<System.Drawing.Point>();
+        public Color FillColor = new Color();
+        public Color StrokeColor = new Color();
+        public int StrokeWidth = 1;
+        public List<System.Drawing.PointF> Points = new List<System.Drawing.PointF>();
+    }
+
+    public class Color
+    {
+        public byte R = 0;
+        public byte G = 0;
+        public byte B = 0;
+        public byte A = 255;
     }
 
 }
