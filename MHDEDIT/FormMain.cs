@@ -373,7 +373,7 @@ Used components:
             FormObject objectEditor = new FormObject(obj);
             if(objectEditor.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
             {
-                dataManager.data.Objects.Add(obj);
+                dataManager.data.Objects.Add(objectEditor.Result);
                 dataManager.Refresh();
                 TreeNode tNode = treeViewOverview.Nodes[0].Nodes[2].Nodes[dataManager.data.Objects.Count - 1];
                 tNode.EnsureVisible();
@@ -401,7 +401,7 @@ Used components:
             if(obj != null)
             {
                 FormObject objectEditor = new FormObject(obj);
-                obj = objectEditor.obj;
+                obj = objectEditor.Result;
                 if (objectEditor.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
                 {
                     dataManager.Refresh();

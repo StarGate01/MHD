@@ -35,8 +35,10 @@
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.textBoxStrokeWidth = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.textBoxStrokeColorAlpha = new System.Windows.Forms.TextBox();
+            this.textBoxFillColorAlpha = new System.Windows.Forms.TextBox();
             this.buttonStrokeColor = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.buttonFillColor = new System.Windows.Forms.Button();
@@ -61,8 +63,6 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
             this.listBoxPoints = new System.Windows.Forms.UserSortableListBox();
             this.groupBox1.SuspendLayout();
             this.groupBox6.SuspendLayout();
@@ -78,7 +78,7 @@
             this.buttonOK.Location = new System.Drawing.Point(432, 487);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
-            this.buttonOK.TabIndex = 0;
+            this.buttonOK.TabIndex = 10;
             this.buttonOK.Text = "OK";
             this.buttonOK.UseVisualStyleBackColor = true;
             this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
@@ -89,7 +89,7 @@
             this.buttonAbort.Location = new System.Drawing.Point(513, 487);
             this.buttonAbort.Name = "buttonAbort";
             this.buttonAbort.Size = new System.Drawing.Size(75, 23);
-            this.buttonAbort.TabIndex = 1;
+            this.buttonAbort.TabIndex = 11;
             this.buttonAbort.Text = "Abort";
             this.buttonAbort.UseVisualStyleBackColor = true;
             this.buttonAbort.Click += new System.EventHandler(this.buttonAbort_Click);
@@ -122,7 +122,7 @@
             this.textBoxStrokeWidth.Location = new System.Drawing.Point(6, 16);
             this.textBoxStrokeWidth.Name = "textBoxStrokeWidth";
             this.textBoxStrokeWidth.Size = new System.Drawing.Size(101, 20);
-            this.textBoxStrokeWidth.TabIndex = 6;
+            this.textBoxStrokeWidth.TabIndex = 7;
             this.textBoxStrokeWidth.Text = "1";
             this.textBoxStrokeWidth.TextChanged += new System.EventHandler(this.textBoxStrokeWidth_TextChanged);
             // 
@@ -130,8 +130,8 @@
             // 
             this.groupBox4.Controls.Add(this.label7);
             this.groupBox4.Controls.Add(this.label6);
-            this.groupBox4.Controls.Add(this.textBox2);
-            this.groupBox4.Controls.Add(this.textBox1);
+            this.groupBox4.Controls.Add(this.textBoxStrokeColorAlpha);
+            this.groupBox4.Controls.Add(this.textBoxFillColorAlpha);
             this.groupBox4.Controls.Add(this.buttonStrokeColor);
             this.groupBox4.Controls.Add(this.label4);
             this.groupBox4.Controls.Add(this.buttonFillColor);
@@ -143,21 +143,39 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Colors";
             // 
-            // textBox2
+            // label7
             // 
-            this.textBox2.Location = new System.Drawing.Point(154, 50);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(32, 20);
-            this.textBox2.TabIndex = 7;
-            this.textBox2.Text = "255";
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(191, 53);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(14, 13);
+            this.label7.TabIndex = 9;
+            this.label7.Text = "α";
             // 
-            // textBox1
+            // label6
             // 
-            this.textBox1.Location = new System.Drawing.Point(154, 21);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(32, 20);
-            this.textBox1.TabIndex = 6;
-            this.textBox1.Text = "255";
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(192, 24);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(14, 13);
+            this.label6.TabIndex = 8;
+            this.label6.Text = "α";
+            // 
+            // textBoxStrokeColorAlpha
+            // 
+            this.textBoxStrokeColorAlpha.Location = new System.Drawing.Point(154, 50);
+            this.textBoxStrokeColorAlpha.Name = "textBoxStrokeColorAlpha";
+            this.textBoxStrokeColorAlpha.Size = new System.Drawing.Size(32, 20);
+            this.textBoxStrokeColorAlpha.TabIndex = 6;
+            this.textBoxStrokeColorAlpha.Text = "255";
+            // 
+            // textBoxFillColorAlpha
+            // 
+            this.textBoxFillColorAlpha.Location = new System.Drawing.Point(154, 21);
+            this.textBoxFillColorAlpha.Name = "textBoxFillColorAlpha";
+            this.textBoxFillColorAlpha.Size = new System.Drawing.Size(32, 20);
+            this.textBoxFillColorAlpha.TabIndex = 4;
+            this.textBoxFillColorAlpha.Text = "255";
             // 
             // buttonStrokeColor
             // 
@@ -165,7 +183,7 @@
             this.buttonStrokeColor.Location = new System.Drawing.Point(77, 48);
             this.buttonStrokeColor.Name = "buttonStrokeColor";
             this.buttonStrokeColor.Size = new System.Drawing.Size(71, 23);
-            this.buttonStrokeColor.TabIndex = 3;
+            this.buttonStrokeColor.TabIndex = 5;
             this.buttonStrokeColor.UseVisualStyleBackColor = false;
             this.buttonStrokeColor.Click += new System.EventHandler(this.buttonStrokeColor_Click);
             // 
@@ -184,7 +202,7 @@
             this.buttonFillColor.Location = new System.Drawing.Point(77, 19);
             this.buttonFillColor.Name = "buttonFillColor";
             this.buttonFillColor.Size = new System.Drawing.Size(71, 23);
-            this.buttonFillColor.TabIndex = 1;
+            this.buttonFillColor.TabIndex = 3;
             this.buttonFillColor.UseVisualStyleBackColor = false;
             this.buttonFillColor.Click += new System.EventHandler(this.buttonFillColor_Click);
             // 
@@ -222,7 +240,7 @@
             this.textBoxStartRotation.Location = new System.Drawing.Point(6, 19);
             this.textBoxStartRotation.Name = "textBoxStartRotation";
             this.textBoxStartRotation.Size = new System.Drawing.Size(99, 20);
-            this.textBoxStartRotation.TabIndex = 5;
+            this.textBoxStartRotation.TabIndex = 2;
             this.textBoxStartRotation.Text = "0";
             this.textBoxStartRotation.TextChanged += new System.EventHandler(this.textBoxStartRotation_TextChanged);
             // 
@@ -253,7 +271,7 @@
             this.textBoxStartPositionY.Location = new System.Drawing.Point(29, 45);
             this.textBoxStartPositionY.Name = "textBoxStartPositionY";
             this.textBoxStartPositionY.Size = new System.Drawing.Size(76, 20);
-            this.textBoxStartPositionY.TabIndex = 7;
+            this.textBoxStartPositionY.TabIndex = 1;
             this.textBoxStartPositionY.Text = "0";
             // 
             // textBoxStartPositionX
@@ -261,7 +279,7 @@
             this.textBoxStartPositionX.Location = new System.Drawing.Point(29, 19);
             this.textBoxStartPositionX.Name = "textBoxStartPositionX";
             this.textBoxStartPositionX.Size = new System.Drawing.Size(76, 20);
-            this.textBoxStartPositionX.TabIndex = 5;
+            this.textBoxStartPositionX.TabIndex = 0;
             this.textBoxStartPositionX.Text = "0";
             // 
             // label3
@@ -296,7 +314,7 @@
             this.comboBoxGenerate.Location = new System.Drawing.Point(6, 332);
             this.comboBoxGenerate.Name = "comboBoxGenerate";
             this.comboBoxGenerate.Size = new System.Drawing.Size(128, 21);
-            this.comboBoxGenerate.TabIndex = 18;
+            this.comboBoxGenerate.TabIndex = 8;
             // 
             // panelRender
             // 
@@ -313,7 +331,7 @@
             this.buttonGenerate.Location = new System.Drawing.Point(140, 330);
             this.buttonGenerate.Name = "buttonGenerate";
             this.buttonGenerate.Size = new System.Drawing.Size(88, 24);
-            this.buttonGenerate.TabIndex = 2;
+            this.buttonGenerate.TabIndex = 9;
             this.buttonGenerate.Text = "Generate";
             this.buttonGenerate.UseVisualStyleBackColor = true;
             this.buttonGenerate.Click += new System.EventHandler(this.buttonGenerate_Click);
@@ -383,24 +401,6 @@
             this.colorDialog1.AnyColor = true;
             this.colorDialog1.FullOpen = true;
             // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(192, 24);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(14, 13);
-            this.label6.TabIndex = 8;
-            this.label6.Text = "α";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(191, 53);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(14, 13);
-            this.label7.TabIndex = 9;
-            this.label7.Text = "α";
-            // 
             // listBoxPoints
             // 
             this.listBoxPoints.AllowDrop = true;
@@ -409,7 +409,7 @@
             this.listBoxPoints.Location = new System.Drawing.Point(24, 160);
             this.listBoxPoints.Name = "listBoxPoints";
             this.listBoxPoints.Size = new System.Drawing.Size(210, 277);
-            this.listBoxPoints.TabIndex = 0;
+            this.listBoxPoints.TabIndex = 12;
             this.listBoxPoints.Reorder += new System.Windows.Forms.UserSortableListBox.ReorderHandler(this.listBoxPoints_Reorder);
             this.listBoxPoints.SelectedIndexChanged += new System.EventHandler(this.listBoxPoints_SelectedIndexChanged);
             this.listBoxPoints.DoubleClick += new System.EventHandler(this.listBoxPoints_DoubleClick);
@@ -480,8 +480,8 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox comboBoxGenerate;
         private System.Windows.Forms.ColorDialog colorDialog1;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox textBoxStrokeColorAlpha;
+        private System.Windows.Forms.TextBox textBoxFillColorAlpha;
         private System.Windows.Forms.UserSortableListBox listBoxPoints;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label6;

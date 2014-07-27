@@ -48,12 +48,12 @@ namespace MHD.Content.Level.Data
 
     public class Player
     {
-        public StartPosition StartPosition = new StartPosition();
+        public Point StartPosition = new Point();
         public float StartRotation = 0;
         public float StartEnergy = 1;
     }
 
-    public class StartPosition
+    public class Point
     {
         public float X = 0;
         public float Y = 0;
@@ -62,7 +62,7 @@ namespace MHD.Content.Level.Data
     public class Object
     {
         public string UID = Guid.NewGuid().ToString();
-        public StartPosition StartPosition = new StartPosition();
+        public Point StartPosition = new Point();
         public float StartRotation = 0;
         public string Script = "";
         public Geometry Geometry = new Geometry();
@@ -72,8 +72,8 @@ namespace MHD.Content.Level.Data
     {
         public Color FillColor = new Color();
         public Color StrokeColor = new Color();
-        public int StrokeWidth = 1;
-        public List<System.Drawing.PointF> Points = new List<System.Drawing.PointF>();
+        public float StrokeWidth = 1;
+        public List<Point> Points = new List<Point>();
     }
 
     public class Color

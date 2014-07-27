@@ -21,26 +21,76 @@ namespace MHDEDIT
 
         #region Initialisation
 
-        public MHD.Content.Level.Data.Object obj = new MHD.Content.Level.Data.Object();
+        public MHD.Content.Level.Data.Object Result = new MHD.Content.Level.Data.Object();
 
-        public FormObject(MHD.Content.Level.Data.Object o)
+        public FormObject(MHD.Content.Level.Data.Object obj)
         {
-            if (o != null) obj = o;
+            if (obj != null) Result = obj;
             InitializeComponent();
             comboBoxGenerate.Text = comboBoxGenerate.Items[0].ToString();
+            SetValues(Result);
+        }
+
+        #endregion
+
+        #region Data gui converter
+
+        private void SetValues(MHD.Content.Level.Data.Object objnew)
+        {
+            textBoxStartPositionX.Text = objnew.StartPosition.X.ToString();
+            textBoxStartPositionY.Text = objnew.StartPosition.Y.ToString();
+            textBoxStartRotation.Text = (objnew.StartRotation / Math.PI * 180).ToString();
+            textBoxFillColorAlpha.Text = objnew.Geometry.FillColor.A.ToString();
+            buttonFillColor.BackColor = Color.FromArgb(objnew.Geometry.FillColor.R, objnew.Geometry.FillColor.G, objnew.Geometry.FillColor.B);
+            textBoxStrokeColorAlpha.Text = Result.Geometry.StrokeColor.A.ToString();
+            buttonStrokeColor.BackColor = Color.FromArgb(objnew.Geometry.StrokeColor.R, objnew.Geometry.StrokeColor.G, objnew.Geometry.StrokeColor.B);
+            textBoxStrokeWidth.Text = objnew.Geometry.StrokeWidth.ToString();
+            foreach (MHD.Content.Level.Data.Point point in objnew.Geometry.Points) listBoxPoints.Items.Add(new PointF(point.X, point.Y));
+        }
+
+        private void GetValues()
+        {
+            Result.StartPosition.X = Convert.ToSingle(textBoxStartPositionX.Text);
+            Result.StartPosition.Y = Convert.ToSingle(textBoxStartPositionY.Text);
+            Result.StartRotation = Convert.ToSingle(textBoxStartRotation.Text) / 180 * (float)Math.PI;
+            Result.Geometry.FillColor = new MHD.Content.Level.Data.Color()
+            {
+                A = Convert.ToByte(textBoxFillColorAlpha.Text),
+                R = buttonFillColor.BackColor.R,
+                G = buttonFillColor.BackColor.G,
+                B = buttonFillColor.BackColor.B
+            };
+            Result.Geometry.StrokeColor = new MHD.Content.Level.Data.Color()
+            {
+                A = Convert.ToByte(textBoxStrokeColorAlpha.Text),
+                R = buttonStrokeColor.BackColor.R,
+                G = buttonStrokeColor.BackColor.G,
+                B = buttonStrokeColor.BackColor.B
+            };
+            Result.Geometry.StrokeWidth = Convert.ToSingle(textBoxStrokeWidth.Text);
+            foreach (object item in listBoxPoints.Items) Result.Geometry.Points.Add(new MHD.Content.Level.Data.Point() { X = ((PointF)item).X, Y = ((PointF)item).Y });
         }
 
         #endregion
 
         private void buttonAbort_Click(object sender, EventArgs e)
         {
-            obj = null;
+            Result = null;
             DialogResult = System.Windows.Forms.DialogResult.Abort;
         }
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            DialogResult = System.Windows.Forms.DialogResult.OK;
+            try
+            {
+                GetValues();
+                DialogResult = System.Windows.Forms.DialogResult.OK;
+            }
+            catch
+            {
+                MessageBox.Show("MHDEDIT - Error", "Invalid data", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                DialogResult = System.Windows.Forms.DialogResult.None;
+            }
         }
 
         private void buttonGenerate_Click(object sender, EventArgs e)
