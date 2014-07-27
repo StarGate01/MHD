@@ -37,7 +37,7 @@ namespace MHDEDIT.Compile
             compilerParameters.IncludeDebugInformation = addpdb;
             compilerParameters.OutputAssembly = fileName;
             compilerParameters.ReferencedAssemblies.AddRange( m_currentFile.ReferencedAssemblies.ToArray());
-            using (ResourceWriter writer = new ResourceWriter("resources.resx")) writer.AddResource("level.xml.gzip", MHD.Content.Level.Compression.CompressString(System.IO.File.ReadAllText(xmlRes)));
+            using (ResourceWriter writer = new ResourceWriter("resources.resx")) writer.AddResource("level.xml.gzip", MHD.Content.Level.Compression.Compress(System.IO.File.ReadAllBytes(xmlRes)));
             compilerParameters.EmbeddedResources.Add("resources.resx");
             CompilerResults results = m_codeCompiler.CompileAssemblyFromFile(compilerParameters, codePagePaths);
             if (results.Errors.Count > 0) resultErrors = results.Errors;

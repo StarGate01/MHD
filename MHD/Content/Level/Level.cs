@@ -17,11 +17,39 @@ using SharpDX;
 using SharpDX.Direct2D1;
 using MHD.Content.Level.Data;
 using System.IO.Compression;
+using System.Resources;
 
 #endregion
 
 namespace MHD.Content.Level
 {
+
+
+    public class Level
+    {
+
+        public Data.Root Data;
+        public Dictionary<string, Gameplay.Objects.GameObject> RunableObjects;
+        public ILevelScript LevelScript;
+
+        public Level(string filename)
+        {
+            Assembly levelAsm = Assembly.LoadFile(filename);
+            ResourceReader reader = new ResourceReader(levelAsm.GetManifestResourceStream("resources.resx"));
+            byte[] compressedData = new byte[0];
+            string compressedDataType = "";
+            reader.GetResourceData("level.xml.gzip", out compressedDataType, out compressedData);
+            int gzipOffset = 0;
+            for (int i = 0; i < compressedData.Length; i++) if (compressedData[i] == 31 && compressedData[i + 1] == 139 && compressedData[i + 2] == 8) { gzipOffset = i; break; }
+            Data = Converter.XMLToData(Encoding.UTF8.GetString(Compression.Decompress(compressedData.Skip(gzipOffset).ToArray())), false);
+            foreach(Content.Level.Data.Object obj in Data.Objects)
+            {
+                //Type objType = levelAsm.GetType("ObjectScript_" + obj.UID.Replace('-', '_'));
+                //Gameplay.Objects.GameObject objNew = (Gameplay.Objects.GameObject)Activator.CreateInstance(objType);
+            }
+        }
+
+    }
 
     public class Converter
     {
@@ -200,9 +228,8 @@ namespace MHD.Content.Level
     public class Compression
     {
 
-        public static string CompressString(string text)
+        public static byte[] Compress(byte[] buffer)
         {
-            byte[] buffer = Encoding.UTF8.GetBytes(text);
             MemoryStream memoryStream = new MemoryStream();
             using (GZipStream gZipStream = new GZipStream(memoryStream, CompressionMode.Compress, true))
             {
@@ -214,28 +241,33 @@ namespace MHD.Content.Level
             byte[] gZipBuffer = new byte[compressedData.Length + 4];
             Buffer.BlockCopy(compressedData, 0, gZipBuffer, 4, compressedData.Length);
             Buffer.BlockCopy(BitConverter.GetBytes(buffer.Length), 0, gZipBuffer, 0, 4);
-            return Convert.ToBase64String(gZipBuffer);
+            return gZipBuffer;
         }
 
 
-        public static string DecompressString(string compressedText)
+        public static byte[] Decompress(byte[] gZipBuffer)
         {
-            byte[] gZipBuffer = Convert.FromBase64String(compressedText);
             using (var memoryStream = new MemoryStream())
             {
                 int dataLength = BitConverter.ToInt32(gZipBuffer, 0);
-                memoryStream.Write(gZipBuffer, 4, gZipBuffer.Length - 4);
+                memoryStream.Write(gZipBuffer, 0, gZipBuffer.Length);
                 byte[] buffer = new byte[dataLength];
                 memoryStream.Position = 0;
                 using (GZipStream gZipStream = new GZipStream(memoryStream, CompressionMode.Decompress))
                 {
                     gZipStream.Read(buffer, 0, buffer.Length);
                 }
-                return Encoding.UTF8.GetString(buffer);
+                return buffer;
             }
         }
 
     }
 
+    public class Decompiler
+    {
+
+        //public static List<Gameplay.Objects.GameObject> 
+
+    }
 
 }

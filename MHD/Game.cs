@@ -20,6 +20,7 @@ namespace MHD
 
         #region Private attributes
 
+        private Content.Level.Level level;
         private Input.InputProvider inputProvider;
         private Content.ContentManager contentManager;
         private Matrix3x2 worldTransform = Matrix3x2.Identity;
@@ -29,8 +30,8 @@ namespace MHD
         private Gameplay.UI.Cursor cursor;
         private Gameplay.UI.HUD hud;
         private Gameplay.Objects.Player player;
-        private Gameplay.UI.Button testBtn;
-        private Gameplay.Objects.GameObject testGO;
+        //private Gameplay.UI.Button testBtn;
+        //private Gameplay.Objects.GameObject testGO;
 
         #endregion
 
@@ -46,31 +47,33 @@ namespace MHD
             gameObjects.Add(cursor);
             hud = new Gameplay.UI.HUD();
             gameObjects.Add(hud);
-
             player = new Gameplay.Objects.Player();
             gameObjects.Add(player);
 
-            testBtn = new Gameplay.UI.Button(
-                "Content\\Image\\menu.png",
-                new Rectangle(200, 200, 100, 100),
-                (float)(-Math.PI / 16),
-                new Color[] { 
-                    Color.LightGray, 
-                    Color.Yellow, 
-                    Color.Orange 
-                });
-            gameObjects.Add(testBtn);
+            level = new Content.Level.Level("C:\\Users\\Christoph\\Desktop\\testlevel.dll");
+            gameObjects.AddRange(level.RunableObjects.Values);
 
-            testGO = new Gameplay.Objects.GameObject(
-                Geometry.Static.Operations.RectangleToPath(new Rectangle(-300, 200, 100, 100)),
-                (float)Math.PI / 8,
-                new Gameplay.Objects.GameObject.ColorInfo
-                {
-                    FillColor = Color.Blue,
-                    StrokeColor = Color.Silver,
-                    StrokeWidth = 3
-                });
-            gameObjects.Add(testGO);
+            //testBtn = new Gameplay.UI.Button(
+            //    "Content\\Image\\menu.png",
+            //    new Rectangle(200, 200, 100, 100),
+            //    (float)(-Math.PI / 16),
+            //    new Color[] { 
+            //        Color.LightGray, 
+            //        Color.Yellow, 
+            //        Color.Orange 
+            //    });
+            //gameObjects.Add(testBtn);
+
+            //testGO = new Gameplay.Objects.GameObject(
+            //    Geometry.Static.Operations.RectangleToPath(new Rectangle(-300, 200, 100, 100)),
+            //    (float)Math.PI / 8,
+            //    new Gameplay.Objects.GameObject.ColorInfo
+            //    {
+            //        FillColor = Color.Blue,
+            //        StrokeColor = Color.Silver,
+            //        StrokeWidth = 3
+            //    });
+            //gameObjects.Add(testGO);
 
             gameObjects.ForEach(el => el.Initialize());
             base.Initialize();
@@ -132,7 +135,7 @@ namespace MHD
                 if (inputProvider.KeyboardState.IsPressed(Key.F11) && !inputProvider.KeyboardStateOld.IsPressed(Key.F11)) base.ToggleFullscreen();
                 if (inputProvider.KeyboardState.IsPressed(Key.Escape) && !inputProvider.KeyboardStateOld.IsPressed(Key.Escape)) Environment.Exit(0);
 
-                if (testBtn.State.HasFlag(Gameplay.UI.Button.ButtonState.Down) && !testBtn.StateOld.HasFlag(Gameplay.UI.Button.ButtonState.Down)) System.Windows.Forms.MessageBox.Show("ok");
+                //if (testBtn.State.HasFlag(Gameplay.UI.Button.ButtonState.Down) && !testBtn.StateOld.HasFlag(Gameplay.UI.Button.ButtonState.Down)) System.Windows.Forms.MessageBox.Show("ok");
 
                 gameObjects.ForEach(el => el.Update(totalGameTime, timeSinceLastFrame, inputProvider, worldTransform, viewTransform));
                 inputProvider.Update();
@@ -155,8 +158,9 @@ namespace MHD
                 ((BitmapBrush)contentManager.Get("background_image")).Transform = viewTransform * worldTransform;
                 RenderTarget2D.FillRectangle(new Rectangle(0, 0, (int)RenderTarget2D.Size.Width, (int)RenderTarget2D.Size.Height), (BitmapBrush)contentManager.Get("background_image"));
                 RenderTarget2D.Transform = worldTransform;
-                testBtn.Render(RenderTarget2D, viewTransform);
-                testGO.Render(RenderTarget2D, viewTransform);
+                //testBtn.Render(RenderTarget2D, viewTransform);
+                //testGO.Render(RenderTarget2D, viewTransform);
+                gameObjects.ForEach(el => el.Render(RenderTarget2D, viewTransform));
                 RenderTarget2D.Transform = Matrix3x2.Identity;
                 player.Render(RenderTarget2D, viewTransform);
                 hud.Render(RenderTarget2D, viewTransform);
