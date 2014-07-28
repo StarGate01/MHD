@@ -44,7 +44,7 @@
             // 
             // listBox1
             // 
-            this.listBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+            this.listBox1.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.listBox1.Font = new System.Drawing.Font("Courier New", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.listBox1.ForeColor = System.Drawing.SystemColors.WindowText;
             this.listBox1.FormattingEnabled = true;
@@ -70,7 +70,8 @@
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "MHDEDIT - Compile errors";
+            this.Text = "MHDEDIT - Compile";
+            this.TopMost = true;
             this.Load += new System.EventHandler(this.FormCompileErrors_Load);
             this.ResumeLayout(false);
 
@@ -79,6 +80,6 @@
         #endregion
 
         private System.Windows.Forms.Button buttonOK;
-        private System.Windows.Forms.ListBox listBox1;
+        public System.Windows.Forms.ListBox listBox1;
     }
 }

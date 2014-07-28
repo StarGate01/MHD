@@ -15,9 +15,9 @@ namespace MHDEDIT
     public partial class FormCompileErrors : Form
     {
 
-        private CompilerErrorCollection errors;
+        private List<string> errors;
 
-        public FormCompileErrors(CompilerErrorCollection err)
+        public FormCompileErrors(List<string> err)
         {
             errors = err;
             InitializeComponent();
@@ -25,16 +25,13 @@ namespace MHDEDIT
 
         private void FormCompileErrors_Load(object sender, EventArgs e)
         {
-            foreach (CompilerError actError in errors) {
-                //string displayError = actError.FileName + " (" + actError.Line.ToString() + "," + actError.Column.ToString() + ")" + actError.ErrorText + Environment.NewLine;
-                //listViewErrors.Items.Add(actError.FileName).SubItems.AddRange(new string[] { actError.Line.ToString(), actError.Column.ToString(), actError.ErrorText } , Color.Black, (actError.IsWarning)? Color.Yellow:Color.Red, buttonOK.Font);
-                listBox1.Items.Add(actError.FileName.Substring(actError.FileName.LastIndexOf("\\") + 1) + " (" + actError.Line.ToString() + "," + actError.Column.ToString() + ") " + actError.ErrorText);
-            }
+            foreach (string actError in errors) listBox1.Items.Add(actError);
         }
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            this.Close();
+            DialogResult = System.Windows.Forms.DialogResult.OK;
+            Close();
         }
 
     }

@@ -31,7 +31,6 @@ namespace MHD
         private Gameplay.UI.HUD hud;
         private Gameplay.Objects.Player player;
         //private Gameplay.UI.Button testBtn;
-        //private Gameplay.Objects.GameObject testGO;
 
         #endregion
 
@@ -44,11 +43,8 @@ namespace MHD
             contentManager = new Content.ContentManager();
 
             cursor = new Gameplay.UI.Cursor();
-            gameObjects.Add(cursor);
             hud = new Gameplay.UI.HUD();
-            gameObjects.Add(hud);
             player = new Gameplay.Objects.Player();
-            gameObjects.Add(player);
 
             level = new Content.Level.Level("C:\\Users\\Christoph\\Desktop\\testlevel.dll");
             gameObjects.AddRange(level.RunableObjects.Values);
@@ -64,17 +60,9 @@ namespace MHD
             //    });
             //gameObjects.Add(testBtn);
 
-            //testGO = new Gameplay.Objects.GameObject(
-            //    Geometry.Static.Operations.RectangleToPath(new Rectangle(-300, 200, 100, 100)),
-            //    (float)Math.PI / 8,
-            //    new Gameplay.Objects.GameObject.ColorInfo
-            //    {
-            //        FillColor = Color.Blue,
-            //        StrokeColor = Color.Silver,
-            //        StrokeWidth = 3
-            //    });
-            //gameObjects.Add(testGO);
-
+            player.Initialize();
+            hud.Initialize();
+            cursor.Initialize();
             gameObjects.ForEach(el => el.Initialize());
             base.Initialize();
         }
@@ -85,6 +73,9 @@ namespace MHD
             contentManager.Add("fps_textColor", Color.LightGray, Content.ContentManager.DefaultResourceManagers.ColorToSolidColorBrush);
             contentManager.Add("background_image", "Content\\Image\\background.png", Content.ContentManager.DefaultResourceManagers.StringToBitmapBrush);
             contentManager.LoadAll();
+            player.LoadContent();
+            hud.LoadContent();
+            cursor.LoadContent();
             gameObjects.ForEach(el => el.LoadContent());
             base.LoadContent();
         }
@@ -92,6 +83,9 @@ namespace MHD
         public override void UnloadContent()
         {
             contentManager.Dispose();
+            player.Dispose();
+            hud.Dispose();
+            cursor.Dispose();
             gameObjects.ForEach(el => el.Dispose());
             base.UnloadContent();
         }
@@ -99,6 +93,9 @@ namespace MHD
         public override void LinkContent(RenderTarget renderTarget2D)
         {
             contentManager.LinkAll(RenderTarget2D);
+            player.LinkContent(renderTarget2D);
+            hud.LinkContent(renderTarget2D);
+            cursor.LinkContent(renderTarget2D);
             gameObjects.ForEach(el => el.LinkContent(renderTarget2D));
             scale = renderTarget2D.Size.Width / 1300;
             base.LinkContent(null);
@@ -107,6 +104,9 @@ namespace MHD
         public override void UnlinkContent()
         {
             contentManager.UnlinkAll();
+            player.UnlinkContent();
+            hud.UnlinkContent();
+            cursor.UnlinkContent();
             gameObjects.ForEach(el => el.UnlinkContent());
             base.UnlinkContent();
         }
@@ -137,7 +137,13 @@ namespace MHD
 
                 //if (testBtn.State.HasFlag(Gameplay.UI.Button.ButtonState.Down) && !testBtn.StateOld.HasFlag(Gameplay.UI.Button.ButtonState.Down)) System.Windows.Forms.MessageBox.Show("ok");
 
-                gameObjects.ForEach(el => el.Update(totalGameTime, timeSinceLastFrame, inputProvider, worldTransform, viewTransform));
+                player.Update(totalGameTime, timeSinceLastFrame, inputProvider, worldTransform, viewTransform);
+                hud.Update(totalGameTime, timeSinceLastFrame, inputProvider, worldTransform, viewTransform);
+                cursor.Update(totalGameTime, timeSinceLastFrame, inputProvider, worldTransform, viewTransform);
+                foreach(Gameplay.Objects.GameObject obj in gameObjects)
+                {
+                    obj.Update(totalGameTime, timeSinceLastFrame, inputProvider, worldTransform, viewTransform);
+                }
                 inputProvider.Update();
 
                 #endregion
@@ -159,8 +165,10 @@ namespace MHD
                 RenderTarget2D.FillRectangle(new Rectangle(0, 0, (int)RenderTarget2D.Size.Width, (int)RenderTarget2D.Size.Height), (BitmapBrush)contentManager.Get("background_image"));
                 RenderTarget2D.Transform = worldTransform;
                 //testBtn.Render(RenderTarget2D, viewTransform);
-                //testGO.Render(RenderTarget2D, viewTransform);
-                gameObjects.ForEach(el => el.Render(RenderTarget2D, viewTransform));
+                foreach(Gameplay.Objects.GameObject obj in gameObjects)
+                {
+                    obj.Render(RenderTarget2D, viewTransform);
+                }
                 RenderTarget2D.Transform = Matrix3x2.Identity;
                 player.Render(RenderTarget2D, viewTransform);
                 hud.Render(RenderTarget2D, viewTransform);

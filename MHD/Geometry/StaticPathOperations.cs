@@ -18,6 +18,19 @@ namespace MHD.Geometry.Static
     public class Operations
     {
 
+        public static PathGeometry PointsToPath(Point[] bounds)
+        {
+            PathGeometry Bounds = new PathGeometry(Content.ResourceManagers.Static.Operations.factory2D);
+            using (GeometrySink gSink = Bounds.Open())
+            {
+                gSink.BeginFigure(bounds[0], FigureBegin.Filled);
+                for (int i = 1; i < bounds.Length; i++) gSink.AddLine(bounds[i]);
+                gSink.EndFigure(FigureEnd.Closed);
+                gSink.Close();
+            }
+            return Bounds;
+        }
+
         public static PathGeometry RectangleToPath(Rectangle bounds)
         {
             PathGeometry Bounds = new PathGeometry(Content.ResourceManagers.Static.Operations.factory2D);

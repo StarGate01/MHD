@@ -29,7 +29,7 @@ namespace MHD.Content.Level
     {
 
         public Data.Root Data;
-        public Dictionary<string, Gameplay.Objects.GameObject> RunableObjects;
+        public Dictionary<string, Gameplay.Objects.GameObject> RunableObjects = new Dictionary<string,Gameplay.Objects.GameObject>();
         public ILevelScript LevelScript;
 
         public Level(string filename)
@@ -42,10 +42,28 @@ namespace MHD.Content.Level
             int gzipOffset = 0;
             for (int i = 0; i < compressedData.Length; i++) if (compressedData[i] == 31 && compressedData[i + 1] == 139 && compressedData[i + 2] == 8) { gzipOffset = i; break; }
             Data = Converter.XMLToData(Encoding.UTF8.GetString(Compression.Decompress(compressedData.Skip(gzipOffset).ToArray())), false);
-            foreach(Content.Level.Data.Object obj in Data.Objects)
+            foreach(Type type in levelAsm.GetTypes())
             {
-                //Type objType = levelAsm.GetType("ObjectScript_" + obj.UID.Replace('-', '_'));
-                //Gameplay.Objects.GameObject objNew = (Gameplay.Objects.GameObject)Activator.CreateInstance(objType);
+                if (type.Name == "LevelScript")
+                {
+                    LevelScript = (Content.Level.ILevelScript)Activator.CreateInstance(type);
+                }
+                else
+                {
+                    string uid = type.Name.Substring(13).Replace('_', '-');
+                    Content.Level.Data.Object obj = Data.Objects.First(el => el.UID == uid);
+                    Gameplay.Objects.GameObject runableObject = (Gameplay.Objects.GameObject)Activator.CreateInstance(type, new object[] {
+                        Geometry.Static.Operations.PointsToPath(obj.Geometry.Points.Select<Content.Level.Data.Point, SharpDX.Point>(el => new SharpDX.Point((int)el.X, (int)el.Y)).ToArray()),
+                        obj.StartRotation,
+                        new Gameplay.Objects.GameObject.ColorInfo() { 
+                            FillColor = new SharpDX.Color(obj.Geometry.FillColor.R, obj.Geometry.FillColor.G, obj.Geometry.FillColor.B, obj.Geometry.FillColor.A),
+                            StrokeColor = new SharpDX.Color(obj.Geometry.StrokeColor.R, obj.Geometry.StrokeColor.G, obj.Geometry.StrokeColor.B, obj.Geometry.StrokeColor.A),
+                            StrokeWidth = obj.Geometry.StrokeWidth,
+                        },
+                    });
+                    runableObject.translation = new Vector2(obj.StartPosition.X, obj.StartPosition.Y);
+                    RunableObjects.Add(obj.UID, runableObject);
+                }
             }
         }
 
@@ -260,13 +278,6 @@ namespace MHD.Content.Level
                 return buffer;
             }
         }
-
-    }
-
-    public class Decompiler
-    {
-
-        //public static List<Gameplay.Objects.GameObject> 
 
     }
 

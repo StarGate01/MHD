@@ -21,30 +21,20 @@ namespace MHD.Gameplay.Objects
         {
             public Color FillColor;
             public Color StrokeColor;
-            public int StrokeWidth;
+            public float StrokeWidth;
             public StrokeStyle StrokeStyle;
         }
 
         #region Private attributes
 
-        private ColorInfo colors;
-
-        #endregion
-
-        #region Public Properties
-
-        public ColorInfo Colors
-        {
-            get { return colors; }
-            set { colors = value; }
-        }
+        public ColorInfo Colors;
 
         #endregion
 
         public GameObject(PathGeometry bounds, float rot, ColorInfo color)
             : base(bounds, rot)
         {
-            colors = color;
+            Colors = color;
         }
 
         #region Gameloop
@@ -59,7 +49,7 @@ namespace MHD.Gameplay.Objects
             Matrix3x2 worldTransform = renderTarget2D.Transform;
             renderTarget2D.Transform = DynamicTransform * viewTransform * worldTransform;
             renderTarget2D.FillGeometry(Bounds, (SolidColorBrush)ContentManager.Get("fillcolor"));
-            renderTarget2D.DrawGeometry(Bounds, (SolidColorBrush)ContentManager.Get("strokecolor"), colors.StrokeWidth, colors.StrokeStyle);
+            renderTarget2D.DrawGeometry(Bounds, (SolidColorBrush)ContentManager.Get("strokecolor"), Colors.StrokeWidth, Colors.StrokeStyle);
             renderTarget2D.Transform = worldTransform;
             base.Render(renderTarget2D, viewTransform);
         }
@@ -70,16 +60,16 @@ namespace MHD.Gameplay.Objects
 
         public override void Initialize()
         {
-            ContentManager.Add("fillcolor", colors.FillColor, Content.ContentManager.DefaultResourceManagers.ColorToSolidColorBrush);
-            ContentManager.Add("strokecolor", colors.StrokeColor, Content.ContentManager.DefaultResourceManagers.ColorToSolidColorBrush);
+            ContentManager.Add("fillcolor", Colors.FillColor, Content.ContentManager.DefaultResourceManagers.ColorToSolidColorBrush);
+            ContentManager.Add("strokecolor", Colors.StrokeColor, Content.ContentManager.DefaultResourceManagers.ColorToSolidColorBrush);
             base.Initialize();
         }
 
         public virtual void RefreshContent(RenderTarget renderTarget2D)
         {
             ContentManager.UnlinkAll();
-            ContentManager.Access("fillcolor").Load(colors.FillColor);
-            ContentManager.Access("fillcolor").Load(colors.FillColor);
+            ContentManager.Access("fillcolor").Load(Colors.FillColor);
+            ContentManager.Access("fillcolor").Load(Colors.FillColor);
             ContentManager.LinkAll(renderTarget2D);
         }
 

@@ -34,7 +34,6 @@ namespace MHDEDIT
 
         private string lastSavePath = null;
         private MHD.Content.Level.Manager dataManager;
-        private Lazy<Compile.CSharpScriptCompiler> m_scriptCompiler;
         private Compile.ScriptFile m_currentFile;
         private ICSharpCode.AvalonEdit.TextEditor avalonEditor;
         private CodeCompletionBeahvior avalonCodeCompletionBehaviour;
@@ -52,7 +51,6 @@ namespace MHDEDIT
         private void FormMain_Load(object sender, EventArgs e)
         {
             dataManager = new MHD.Content.Level.Manager(ref treeViewOverview);
-            m_scriptCompiler = new Lazy<Compile.CSharpScriptCompiler>();
             LoadAvalon();
         }
 
@@ -274,21 +272,18 @@ Used components:
             }
         }
 
-        private void saveFileDialogCompile_FileOk(object sender, CancelEventArgs e)
+        private async void saveFileDialogCompile_FileOk(object sender, CancelEventArgs e)
         {
             Save();
             List<string> codePages = System.IO.Directory.GetFiles(Path.Combine(lastSavePath, "objectscripts"), "*.cs").ToList();
             codePages.Add(Path.Combine(lastSavePath, "level.cs"));
-            CompilerErrorCollection errors = m_scriptCompiler.Value.CompileAndSave(m_currentFile, codePages.ToArray(), Path.Combine(lastSavePath, "level.xml"), addPDBfile, saveFileDialogCompile.FileName);
-            if (errors.Count > 0)
-            {
-                FormCompileErrors errorForm = new FormCompileErrors(errors);
-                errorForm.ShowDialog(this);
-            }
-            else
-            {
-                MessageBox.Show("Compiling completed", "MHDEDIT - Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
+            FormCompileErrors errorForm = new FormCompileErrors(new List<string>() { "Starting compiler ..." });
+            errorForm.Show();
+            errorForm.listBox1.Items.AddRange(
+                await Task.Factory.StartNew<object[]>(() =>
+                {
+                    return Compile.ScriptCompiler.CompileAndSave(m_currentFile, codePages.ToArray(), Path.Combine(lastSavePath, "level.xml"), addPDBfile, saveFileDialogCompile.FileName).Cast<object>().ToArray();
+                }));
         }
 
         #endregion
@@ -329,7 +324,7 @@ Used components:
 
         private void treeViewOverview_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            if(e.Node.Text.EndsWith(".cs"))
+            if (e.Node.Text.EndsWith(".cs"))
             {
                 if (e.Node.Text == "level.cs")
                 {

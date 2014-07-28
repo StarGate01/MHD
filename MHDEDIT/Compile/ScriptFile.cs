@@ -77,19 +77,6 @@ namespace MHDEDIT.Compile
             m_projectContent = new DefaultProjectContent();
             m_referencedAssemblies = new ObservableCollection<string>();
             m_referencedAssemblies.CollectionChanged += OnReferencedAssembliesCollectionChanged;
-            //m_referencedAssemblies.Add("mscorlib.dll");
-            //m_referencedAssemblies.Add("Microsoft.CSharp.dll");
-            //m_referencedAssemblies.Add("System.dll");
-            //m_referencedAssemblies.Add("System.Core.dll");
-            //m_referencedAssemblies.Add("System.Data.dll");
-            //m_referencedAssemblies.Add("System.Linq.dll");
-            //m_referencedAssemblies.Add("System.Reflection.dll");
-            //m_referencedAssemblies.Add("System.IO.dll");
-            //m_referencedAssemblies.Add("SharpDX.dll");
-            //m_referencedAssemblies.Add("SharpDX.Direct3D11.dll");
-            //m_referencedAssemblies.Add("SharpDX.Direct2D1.dll");
-            //m_referencedAssemblies.Add("SharpDX.DirectInput.dll"); 
-            //m_referencedAssemblies.Add("MHD.exe");
             ScriptContent = text;
         }
 

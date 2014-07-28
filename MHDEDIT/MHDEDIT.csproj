@@ -104,7 +104,7 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Compile\CSharpScriptCompiler.cs" />
+    <Compile Include="Compile\ScriptCompiler.cs" />
     <Compile Include="Compile\ScriptFile.cs" />
     <Compile Include="FormCompileErrors.cs">
       <SubType>Form</SubType>
