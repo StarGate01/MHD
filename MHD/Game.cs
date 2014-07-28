@@ -46,7 +46,7 @@ namespace MHD
             hud = new Gameplay.UI.HUD();
             player = new Gameplay.Objects.Player();
 
-            level = new Content.Level.Level("C:\\Users\\Christoph\\Desktop\\testlevel.dll");
+            level = new Content.Level.Level("C:\\Users\\Christoph\\Desktop\\level.dll");
             gameObjects.AddRange(level.RunableObjects.Values);
 
             //testBtn = new Gameplay.UI.Button(

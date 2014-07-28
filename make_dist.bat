@@ -17,6 +17,9 @@ copy MHDEDIT\bin\Release\MHDEDIT.exe %name%
 for /R MHDEDIT\bin\Release %%f in (*.dll) do copy %%f %name%
 copy MHDEDIT\bin\Release\MHDEDIT.exe.config %name%
 
+REM MHDCOMPILE
+copy MHDCOMPILE\bin\Release\MHDCOMPILE.exe %name%
+
 :2
 pause
 exit
