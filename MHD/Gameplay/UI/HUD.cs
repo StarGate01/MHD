@@ -15,6 +15,7 @@ using DefaultColors = MHD.Content.ResourceManagers.Static.DefaultColors;
 
 namespace MHD.Gameplay.UI
 {
+
     public class HUD : Geometry.Entity
     {
 
@@ -82,4 +83,5 @@ namespace MHD.Gameplay.UI
         #endregion
 
     }
+
 }

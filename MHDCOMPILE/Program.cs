@@ -47,7 +47,6 @@ namespace MHDCOMPILE
                 compileParameters.EmbeddedResources.Add("resources.resx");
                 Console.WriteLine("Compiling scripts ...");
                 Console.WriteLine("");
-                System.Threading.Thread.Sleep(3000);
                 CompilerResults results = m_codeCompiler.CompileAssemblyFromFile(compileParameters, csFilesPaths);
                 CompilerErrorCollection resultErrors = new CompilerErrorCollection();
                 if (results.Errors.Count > 0) resultErrors = results.Errors;

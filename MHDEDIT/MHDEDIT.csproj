@@ -193,6 +193,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MHDCOMPILE\MHDCOMPILE.csproj">
+      <Project>{a321f9a2-8d9c-4ec6-8771-bc67227b81a7}</Project>
+      <Name>MHDCOMPILE</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MHD\MHD.csproj">
       <Project>{f8e4733b-2727-43c4-8bc5-5eb722598f5a}</Project>
       <Name>MHD</Name>

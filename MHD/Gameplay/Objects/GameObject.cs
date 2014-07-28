@@ -25,16 +25,16 @@ namespace MHD.Gameplay.Objects
             public StrokeStyle StrokeStyle;
         }
 
-        #region Private attributes
+        #region Attributes
 
-        public ColorInfo Colors;
+        public readonly ColorInfo InitialColors;
 
         #endregion
 
         public GameObject(PathGeometry bounds, float rot, ColorInfo color)
             : base(bounds, rot)
         {
-            Colors = color;
+            InitialColors = color;
         }
 
         #region Gameloop
@@ -49,7 +49,7 @@ namespace MHD.Gameplay.Objects
             Matrix3x2 worldTransform = renderTarget2D.Transform;
             renderTarget2D.Transform = DynamicTransform * viewTransform * worldTransform;
             renderTarget2D.FillGeometry(Bounds, (SolidColorBrush)ContentManager.Get("fillcolor"));
-            renderTarget2D.DrawGeometry(Bounds, (SolidColorBrush)ContentManager.Get("strokecolor"), Colors.StrokeWidth, Colors.StrokeStyle);
+            renderTarget2D.DrawGeometry(Bounds, (SolidColorBrush)ContentManager.Get("strokecolor"), InitialColors.StrokeWidth, InitialColors.StrokeStyle);
             renderTarget2D.Transform = worldTransform;
             base.Render(renderTarget2D, viewTransform);
         }
@@ -60,16 +60,16 @@ namespace MHD.Gameplay.Objects
 
         public override void Initialize()
         {
-            ContentManager.Add("fillcolor", Colors.FillColor, Content.ContentManager.DefaultResourceManagers.ColorToSolidColorBrush);
-            ContentManager.Add("strokecolor", Colors.StrokeColor, Content.ContentManager.DefaultResourceManagers.ColorToSolidColorBrush);
+            ContentManager.Add("fillcolor", InitialColors.FillColor, Content.ContentManager.DefaultResourceManagers.ColorToSolidColorBrush);
+            ContentManager.Add("strokecolor", InitialColors.StrokeColor, Content.ContentManager.DefaultResourceManagers.ColorToSolidColorBrush);
             base.Initialize();
         }
 
         public virtual void RefreshContent(RenderTarget renderTarget2D)
         {
             ContentManager.UnlinkAll();
-            ContentManager.Access("fillcolor").Load(Colors.FillColor);
-            ContentManager.Access("fillcolor").Load(Colors.FillColor);
+            ContentManager.Access("fillcolor").Load(InitialColors.FillColor);
+            ContentManager.Access("fillcolor").Load(InitialColors.FillColor);
             ContentManager.LinkAll(renderTarget2D);
         }
 

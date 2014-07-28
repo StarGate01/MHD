@@ -457,8 +457,8 @@ Used components:
             avalonEditor = new ICSharpCode.AvalonEdit.TextEditor();
             avalonEditor.Name = "TextEditor";
             avalonEditor.ShowLineNumbers = true;
-            avalonEditor.FontFamily = new System.Windows.Media.FontFamily("Courier New");
-            avalonEditor.FontSize = 14;
+            avalonEditor.FontFamily = new System.Windows.Media.FontFamily("Consolas");
+            avalonEditor.FontSize = 12;
             avalonEditor.Options.ConvertTabsToSpaces = true;
             avalonEditor.Options.EnableTextDragDrop = true;
             avalonEditor.TextArea.SelectionCornerRadius = 0;

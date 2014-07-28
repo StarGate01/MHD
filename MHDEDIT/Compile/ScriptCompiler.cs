@@ -22,7 +22,6 @@ namespace MHDEDIT.Compile
             compilerStdout.Clear();
             ProcessStartInfo compilerParams = new ProcessStartInfo();
             if (File.Exists("MHDCOMPILE.exe")) compilerParams.FileName = "MHDCOMPILE.exe";
-            else if (File.Exists("../../../MHDCOMPILE/bin/Release/MHDCOMPILE.exe")) compilerParams.FileName = "../../../MHDCOMPILE/bin/Release/MHDCOMPILE.exe";
             else
             {
                 compilerStdout.Add("MHDEDIT: No compiler found");
