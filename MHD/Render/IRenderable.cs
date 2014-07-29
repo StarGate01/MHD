@@ -17,7 +17,7 @@ namespace MHD.Render
     public interface IRenderable
     {
 
-        void Update(TimeSpan totalGameTime, TimeSpan timeSinceLastFrame, Input.InputProvider inputProvider, Matrix3x2 worldTransform, Matrix3x2 viewTransform);
+        void Update(TimeSpan totalGameTime, TimeSpan timeSinceLastFrame, Input.InputProvider inputProvider, ref Matrix3x2 viewTransform);
 
         void Render(RenderTarget renderTarget2D, Matrix3x2 viewTransform);
 

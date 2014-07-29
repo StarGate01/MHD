@@ -110,10 +110,10 @@ namespace MHD.Gameplay.UI
             ((TextFormat)ContentManager.Get("textformat")).TextAlignment = SharpDX.DirectWrite.TextAlignment.Center;
         }
 
-        public override void Update(TimeSpan totalGameTime, TimeSpan timeSinceLastFrame, Input.InputProvider inputProvider, Matrix3x2 worldTransform, Matrix3x2 viewTransform)
+        public override void Update(TimeSpan totalGameTime, TimeSpan timeSinceLastFrame, Input.InputProvider inputProvider, ref Matrix3x2 viewTransform)
         {
             stateOld = state;
-            if (Bounds.FillContainsPoint(inputProvider.MousePositionAbsolute, DynamicTransform * viewTransform * worldTransform, Bounds.FlatteningTolerance))
+            if (Bounds.FillContainsPoint(inputProvider.MousePositionAbsolute, DynamicTransform * viewTransform, Bounds.FlatteningTolerance))
             {
                 state |= ButtonState.Hover;
                 if(inputProvider.MouseState.Buttons[0])
@@ -130,7 +130,7 @@ namespace MHD.Gameplay.UI
                 state &= ~ButtonState.Hover;
                 state &= ~ButtonState.Down;
             }
-            base.Update(totalGameTime, timeSinceLastFrame, inputProvider, worldTransform, viewTransform);
+            base.Update(totalGameTime, timeSinceLastFrame, inputProvider, ref viewTransform);
             if (Action != null)
             {
                 if (!stateOld.HasFlag(ButtonState.Down) && state.HasFlag(ButtonState.Down)) Action(this, new ButtonEventArgs() { Type = ButtonEventType.Down });
@@ -142,8 +142,8 @@ namespace MHD.Gameplay.UI
 
         public override void Render(RenderTarget renderTarget2D, Matrix3x2 viewTransform)
         {
-            Matrix3x2 worldTransform = renderTarget2D.Transform;
-            renderTarget2D.Transform = DynamicTransform * viewTransform * worldTransform;
+            Matrix3x2 oldTransform = renderTarget2D.Transform;
+            renderTarget2D.Transform = DynamicTransform * viewTransform;
             if(state.HasFlag(ButtonState.Hover))
             {
                 if (state.HasFlag(ButtonState.Down))
@@ -161,7 +161,7 @@ namespace MHD.Gameplay.UI
             }
             if (bitmapPath != null) renderTarget2D.DrawBitmap((Bitmap)ContentManager.Get("image"), Bounds.GetBounds(), 1.0f, BitmapInterpolationMode.Linear, null);
             renderTarget2D.DrawText(text, (TextFormat)ContentManager.Get("textformat"), Bounds.GetBounds(), (SolidColorBrush)ContentManager.Get("textcolor"), DrawTextOptions.Clip);
-            renderTarget2D.Transform = worldTransform;
+            renderTarget2D.Transform = oldTransform;
             base.Render(renderTarget2D, viewTransform);
         }
 

@@ -8,7 +8,7 @@ namespace MHD
         {
             using (Render.Frame game = new Render.Game())
             {
-                game.Run(args.Length > 0 && args[0] == "fs");
+                game.Run(!(args.Length > 0 && args[0] == "window"));
             }
         }
     }

@@ -34,7 +34,7 @@ namespace MHD.Gameplay.UI
                     EndCap = CapStyle.Triangle });
         }
 
-        public override void Update(TimeSpan totalGameTime, TimeSpan timeSinceLastFrame, Input.InputProvider inputProvider, Matrix3x2 worldTransform, Matrix3x2 viewTransform)
+        public override void Update(TimeSpan totalGameTime, TimeSpan timeSinceLastFrame, Input.InputProvider inputProvider, ref Matrix3x2 viewTransform)
         {
             Rotation = (float)totalGameTime.TotalMilliseconds / 1000;
             if (inputProvider.MouseState.Buttons[0])
@@ -64,19 +64,19 @@ namespace MHD.Gameplay.UI
             }
 
             Translation = inputProvider.MousePositionAbsolute;
-            base.Update(totalGameTime, timeSinceLastFrame, inputProvider, worldTransform, viewTransform);
+            base.Update(totalGameTime, timeSinceLastFrame, inputProvider, ref viewTransform);
         }
 
         public override void Render(RenderTarget renderTarget2D, Matrix3x2 viewTransform)
         {
-            Matrix3x2 worldTransform = renderTarget2D.Transform;
-            renderTarget2D.Transform = DynamicTransform * worldTransform;
+            Matrix3x2 oldTransform = renderTarget2D.Transform;
+            renderTarget2D.Transform = DynamicTransform;
             for (int i = 0; i < 3; i++)
             {
                 renderRotatedLine(Vector2.Zero, 20 + offsetAdd, 5 + offsetAdd, (float)(Math.PI * 2 * i) / 3, renderTarget2D, (SolidColorBrush)ContentManager.Get("color"));
             }
             renderTarget2D.FillEllipse(new Ellipse(Vector2.Zero, 2, 2), (SolidColorBrush)ContentManager.Get("color"));
-            renderTarget2D.Transform = worldTransform;
+            renderTarget2D.Transform = oldTransform;
             base.Render(renderTarget2D, viewTransform);
         }
 

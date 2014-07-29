@@ -66,11 +66,11 @@ namespace MHD.Gameplay.UI
 
         #region Gameloop
 
-        public virtual void Update(TimeSpan totalGameTime, TimeSpan timeSinceLastFrame, Input.InputProvider inputProvider, Matrix3x2 worldTransform, Matrix3x2 viewTransform)
+        public virtual void Update(TimeSpan totalGameTime, TimeSpan timeSinceLastFrame, Input.InputProvider inputProvider, ref Matrix3x2 viewTransform)
         {
             foreach (Geometry.Entity obj in gameObjects)
             {
-                obj.Update(totalGameTime, timeSinceLastFrame, inputProvider, worldTransform, viewTransform);
+                obj.Update(totalGameTime, timeSinceLastFrame, inputProvider, ref viewTransform);
             }
         }
 

@@ -21,7 +21,6 @@ namespace MHD.Render
         #region Private attributes
 
         private Input.InputProvider inputProvider;
-        public Matrix3x2 worldTransform = Matrix3x2.Identity;
         public Matrix3x2 viewTransform = Matrix3x2.Identity;
         private Dictionary<string, Gameplay.UI.Panel> panels = new Dictionary<string, Gameplay.UI.Panel>();
         private Gameplay.UI.Panel activePanel;
@@ -78,8 +77,8 @@ namespace MHD.Render
         {
             if (RenderWindow.Focused)
             {
-                cursor.Update(totalGameTime, timeSinceLastFrame, inputProvider, worldTransform, viewTransform);
-                activePanel.Update(totalGameTime, timeSinceLastFrame, inputProvider, worldTransform, viewTransform);
+                cursor.Update(totalGameTime, timeSinceLastFrame, inputProvider, ref viewTransform);
+                activePanel.Update(totalGameTime, timeSinceLastFrame, inputProvider, ref viewTransform);
             }
             base.Update(totalGameTime, timeSinceLastFrame);
         }

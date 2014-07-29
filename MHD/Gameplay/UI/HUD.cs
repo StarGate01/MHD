@@ -35,18 +35,17 @@ namespace MHD.Gameplay.UI
 
         #region Gameloop
 
-        public override void Update(TimeSpan totalGameTime, TimeSpan timeSinceLastFrame, Input.InputProvider inputProvider, Matrix3x2 worldTransform, Matrix3x2 viewTransform)
+        public override void Update(TimeSpan totalGameTime, TimeSpan timeSinceLastFrame, Input.InputProvider inputProvider, ref Matrix3x2 viewTransform)
         {
 
-            base.Update(totalGameTime, timeSinceLastFrame, inputProvider, worldTransform,  viewTransform);
+            base.Update(totalGameTime, timeSinceLastFrame, inputProvider, ref viewTransform);
         }
 
         public override void Render(RenderTarget renderTarget2D, Matrix3x2 viewTransform)
         {
-            Matrix3x2 worldTransform = renderTarget2D.Transform;
+            Matrix3x2 oldTransform = renderTarget2D.Transform;
             renderTarget2D.Transform = DynamicTransform * viewTransform *
-              Matrix3x2.Translation(renderTarget2D.Size.Width / 2, renderTarget2D.Size.Height / 2) *
-              renderTarget2D.Transform;
+              Matrix3x2.Translation(renderTarget2D.Size.Width / 2, renderTarget2D.Size.Height / 2);
             TextFormat format = (TextFormat)ContentManager.Get("text_inner");
             SolidColorBrush color = (SolidColorBrush)ContentManager.Get("color");
             renderTarget2D.DrawEllipse(new Ellipse(Vector2.Zero, 120, 120), color);
@@ -59,7 +58,7 @@ namespace MHD.Gameplay.UI
             format.TextAlignment = SharpDX.DirectWrite.TextAlignment.Leading;
             renderTarget2D.DrawText(centerStrings[1], format, new Rectangle(3, -82, 48, 14), color);
             renderTarget2D.DrawText(centerStrings[3], format, new Rectangle(3, 72, 48, 14), color);
-            renderTarget2D.Transform = worldTransform;
+            renderTarget2D.Transform = oldTransform;
             base.Render(renderTarget2D, viewTransform);
         }
 

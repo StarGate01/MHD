@@ -25,6 +25,7 @@ namespace MHD.Gameplay.UI.Panels
         private Gameplay.Objects.Player player;
         private Gameplay.UI.Button testBtn;
         private float FPS = 0;
+        private Matrix3x2 backgroundWorldTransform;
 
         #endregion
 
@@ -58,11 +59,11 @@ namespace MHD.Gameplay.UI.Panels
                     Name = "Arial",
                     Size = 20
                 },
-                Color.Silver);
+                Color.DimGray);
             testBtn.Action += testBtn_Action;
             gameObjects.Add(testBtn);
 
-            level = new Content.Level.Level("C:\\Users\\Christoph\\Desktop\\level.dll");
+            level = new Content.Level.Level(System.IO.Path.Combine(System.Windows.Forms.Application.StartupPath, "Content\\Level\\Default\\level.dll"));
             gameObjects.AddRange(level.RunableObjects.Values);
 
             player.Initialize();
@@ -105,14 +106,15 @@ namespace MHD.Gameplay.UI.Panels
 
         void testBtn_Action(Gameplay.UI.Button sender, Gameplay.UI.Button.ButtonEventArgs e)
         {
-            if (e.Type == Gameplay.UI.Button.ButtonEventType.Down) System.Windows.Forms.MessageBox.Show("OK");
+           
+
         }
 
         #endregion
 
         #region Gameloop
 
-        public override void Update(TimeSpan totalGameTime, TimeSpan timeSinceLastFrame, Input.InputProvider inputProvider, Matrix3x2 worldTransform, Matrix3x2 viewTransform)
+        public override void Update(TimeSpan totalGameTime, TimeSpan timeSinceLastFrame, Input.InputProvider inputProvider, ref Matrix3x2 viewTransform)
         {
             hud.CenterStrings[0] = player.Velocity.ToString("0.0000");
             hud.CenterStrings[1] = player.TurningVelocity.ToString("0.0000");
@@ -120,35 +122,39 @@ namespace MHD.Gameplay.UI.Panels
             hud.CenterStrings[3] = player.VirtualPosition.Y.ToString("0.00");
 
             viewTransform = Matrix3x2.Scaling(scale);
+            backgroundWorldTransform = Matrix3x2.Translation(player.VirtualPosition) *
+                Matrix3x2.Rotation(-player.VirtualRotation + ((float)Math.PI / 2)) *
+                Matrix3x2.Translation(ParentGame.RenderTarget2D.Size.Width / 2, ParentGame.RenderTarget2D.Size.Height / 2);
+
             FPS = (float)timeSinceLastFrame.TotalMilliseconds;
 
             #region Key handling
 
+            if (inputProvider.KeyboardState.IsPressed(Key.Up)) scale += (float)timeSinceLastFrame.TotalMilliseconds * 0.001f;
+            if (inputProvider.KeyboardState.IsPressed(Key.Down)) scale -= (float)timeSinceLastFrame.TotalMilliseconds * 0.001f;
+
             if (inputProvider.KeyboardState.IsPressed(Key.F11) && !inputProvider.KeyboardStateOld.IsPressed(Key.F11)) ParentGame.ToggleFullscreen();
             if (inputProvider.KeyboardState.IsPressed(Key.Escape) && !inputProvider.KeyboardStateOld.IsPressed(Key.Escape)) Environment.Exit(0);
 
-            player.Update(totalGameTime, timeSinceLastFrame, inputProvider, worldTransform, viewTransform);
-            hud.Update(totalGameTime, timeSinceLastFrame, inputProvider, worldTransform, viewTransform);
+            player.Update(totalGameTime, timeSinceLastFrame, inputProvider, ref viewTransform);
+            hud.Update(totalGameTime, timeSinceLastFrame, inputProvider, ref viewTransform);
             foreach (Geometry.Entity obj in gameObjects)
             {
-                obj.Update(totalGameTime, timeSinceLastFrame, inputProvider, worldTransform, viewTransform);
+                obj.Update(totalGameTime, timeSinceLastFrame, inputProvider, ref viewTransform);
             }
             inputProvider.Update();
 
             #endregion
 
-            base.Update(totalGameTime, timeSinceLastFrame, inputProvider, worldTransform, viewTransform);
+            Matrix3x2 newViewTransform = viewTransform * backgroundWorldTransform ;
+            base.Update(totalGameTime, timeSinceLastFrame, inputProvider, ref newViewTransform);
         }
 
         public override void Render(RenderTarget renderTarget2D, Matrix3x2 viewTransform)
         {
-            ParentGame.worldTransform = Matrix3x2.Translation(player.VirtualPosition) *
-                Matrix3x2.Rotation(-player.VirtualRotation + ((float)Math.PI / 2)) *
-                Matrix3x2.Translation(renderTarget2D.Size.Width / 2, renderTarget2D.Size.Height / 2);
-            ((BitmapBrush)contentManager.Get("background_image")).Transform = viewTransform * ParentGame.worldTransform;
+            ((BitmapBrush)contentManager.Get("background_image")).Transform = viewTransform * backgroundWorldTransform;
             renderTarget2D.FillRectangle(new Rectangle(0, 0, (int)renderTarget2D.Size.Width, (int)renderTarget2D.Size.Height), (BitmapBrush)contentManager.Get("background_image"));
-            renderTarget2D.Transform = ParentGame.worldTransform;
-            base.Render(renderTarget2D, viewTransform);
+            base.Render(renderTarget2D, viewTransform * backgroundWorldTransform);
             renderTarget2D.Transform = Matrix3x2.Identity;
             player.Render(renderTarget2D, viewTransform);
             hud.Render(renderTarget2D, viewTransform);

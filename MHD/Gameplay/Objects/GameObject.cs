@@ -39,18 +39,18 @@ namespace MHD.Gameplay.Objects
 
         #region Gameloop
 
-        public override void Update(TimeSpan totalGameTime, TimeSpan timeSinceLastFrame, Input.InputProvider inputProvider, Matrix3x2 worldTransform, Matrix3x2 viewTransform)
+        public override void Update(TimeSpan totalGameTime, TimeSpan timeSinceLastFrame, Input.InputProvider inputProvider, ref Matrix3x2 viewTransform)
         {
-            base.Update(totalGameTime, timeSinceLastFrame, inputProvider, worldTransform, viewTransform);
+            base.Update(totalGameTime, timeSinceLastFrame, inputProvider, ref viewTransform);
         }
 
         public override void Render(RenderTarget renderTarget2D, Matrix3x2 viewTransform)
         {
-            Matrix3x2 worldTransform = renderTarget2D.Transform;
-            renderTarget2D.Transform = DynamicTransform * viewTransform * worldTransform;
+            Matrix3x2 oldTransform = renderTarget2D.Transform;
+            renderTarget2D.Transform = DynamicTransform * viewTransform;
             renderTarget2D.FillGeometry(Bounds, (SolidColorBrush)ContentManager.Get("fillcolor"));
             renderTarget2D.DrawGeometry(Bounds, (SolidColorBrush)ContentManager.Get("strokecolor"), InitialColors.StrokeWidth, InitialColors.StrokeStyle);
-            renderTarget2D.Transform = worldTransform;
+            renderTarget2D.Transform = oldTransform;
             base.Render(renderTarget2D, viewTransform);
         }
 
