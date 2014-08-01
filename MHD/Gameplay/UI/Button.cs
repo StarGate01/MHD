@@ -45,10 +45,13 @@ namespace MHD.Gameplay.UI
         private string bitmapPath;
         private string text;
         private Content.ResourceManagers.Static.BasicTextFormat textFormat;
+        private Color strokeColor;
+        private float strokeWidth;
         private Color backColor;
         private Color hoverColor;
         private Color activeColor;
         private Color textColor;
+        private bool useDefaultRenderer;
         private ButtonState state;
         private ButtonState stateOld;
 
@@ -74,31 +77,60 @@ namespace MHD.Gameplay.UI
 
         #endregion
 
-        public Button(Rectangle bounds, float rotation, Color[] colors, string text, Content.ResourceManagers.Static.BasicTextFormat textFormat, Color textColor) : this(null, bounds, rotation, colors, text, textFormat, textColor)
+        public Button(Rectangle bounds, float rotation, Color[] colors, float strokew, string text, Content.ResourceManagers.Static.BasicTextFormat textFormat, Color textColor)
+            : this(null, bounds, rotation, colors, strokew, text, textFormat, textColor)
         {
         }
 
-        public Button(string path, Rectangle bounds, float rotation, Color[] colors, string etext, Content.ResourceManagers.Static.BasicTextFormat etextFormat, Color etextColor)
+        public Button(Rectangle bounds, float rotation, string text)
+            : this(bounds, rotation, null, 0, text, null, new Color())
+        {
+        }
+
+        public Button(string path, Rectangle bounds, float rotation, Color[] colors, float strokew, string etext, Content.ResourceManagers.Static.BasicTextFormat etextFormat, Color etextColor)
             : base(rotation)
         {
             Bounds = Geometry.Static.Operations.RectangleToPath(ref bounds, out translation);
             text = etext;
-            textFormat = etextFormat;
-            bitmapPath = path;
-            backColor = colors[0];
-            hoverColor = colors[1];
-            activeColor = colors[2];
-            textColor = etextColor;
+            if (colors != null)
+            {
+                useDefaultRenderer = false;
+                backColor = colors[0];
+                hoverColor = colors[1];
+                activeColor = colors[2];
+                textColor = etextColor;
+                strokeColor = colors[3];
+                strokeWidth = strokew;
+                textFormat = etextFormat;
+                bitmapPath = path;
+            }
+            else
+            {
+                useDefaultRenderer = true;
+                backColor = Content.ResourceManagers.Static.DefaultColors.UI.Background;
+                hoverColor = Content.ResourceManagers.Static.DefaultColors.UI.BackgroundHover;
+                activeColor = Content.ResourceManagers.Static.DefaultColors.UI.BackgroundHover;
+                textColor = Content.ResourceManagers.Static.DefaultColors.UI.Text;
+                strokeColor = Content.ResourceManagers.Static.DefaultColors.UI.Text;
+                strokeWidth = 3;
+                bitmapPath = path;
+                textFormat = new Content.ResourceManagers.Static.BasicTextFormat()
+                {
+                    Name = "Courier New",
+                    Size = 20
+                };
+            }
             state = stateOld = ButtonState.Nothing;
         }
 
         public override void Initialize()
         {
-            if(bitmapPath != null) ContentManager.Add("image", bitmapPath, Content.ContentManager.DefaultResourceManagers.StringToBitmap);
+            if (bitmapPath != null) ContentManager.Add("image", bitmapPath, Content.ContentManager.DefaultResourceManagers.StringToBitmap);
             ContentManager.Add("backcolor", backColor, Content.ContentManager.DefaultResourceManagers.ColorToSolidColorBrush);
             ContentManager.Add("hovercolor", hoverColor, Content.ContentManager.DefaultResourceManagers.ColorToSolidColorBrush);
             ContentManager.Add("activecolor", activeColor, Content.ContentManager.DefaultResourceManagers.ColorToSolidColorBrush);
             ContentManager.Add("textcolor", textColor, Content.ContentManager.DefaultResourceManagers.ColorToSolidColorBrush);
+            ContentManager.Add("strokecolor", strokeColor, Content.ContentManager.DefaultResourceManagers.ColorToSolidColorBrush);
             ContentManager.Add("textformat", textFormat, Content.ContentManager.DefaultResourceManagers.BasicTextFormatToTextFormat);
             base.Initialize();
         }
@@ -116,7 +148,7 @@ namespace MHD.Gameplay.UI
             if (Bounds.FillContainsPoint(inputProvider.MousePositionAbsolute, DynamicTransform * viewTransform, Bounds.FlatteningTolerance))
             {
                 state |= ButtonState.Hover;
-                if(inputProvider.MouseState.Buttons[0])
+                if (inputProvider.MouseState.Buttons[0])
                 {
                     state |= ButtonState.Down;
                 }
@@ -144,7 +176,7 @@ namespace MHD.Gameplay.UI
         {
             Matrix3x2 oldTransform = renderTarget2D.Transform;
             renderTarget2D.Transform = DynamicTransform * viewTransform;
-            if(state.HasFlag(ButtonState.Hover))
+            if (state.HasFlag(ButtonState.Hover))
             {
                 if (state.HasFlag(ButtonState.Down))
                 {
@@ -159,6 +191,7 @@ namespace MHD.Gameplay.UI
             {
                 renderTarget2D.FillGeometry(Bounds, (SolidColorBrush)ContentManager.Get("backcolor"));
             }
+            renderTarget2D.DrawGeometry(Bounds, (SolidColorBrush)ContentManager.Get("strokecolor"), strokeWidth);
             if (bitmapPath != null) renderTarget2D.DrawBitmap((Bitmap)ContentManager.Get("image"), Bounds.GetBounds(), 1.0f, BitmapInterpolationMode.Linear, null);
             renderTarget2D.DrawText(text, (TextFormat)ContentManager.Get("textformat"), Bounds.GetBounds(), (SolidColorBrush)ContentManager.Get("textcolor"), DrawTextOptions.Clip);
             renderTarget2D.Transform = oldTransform;

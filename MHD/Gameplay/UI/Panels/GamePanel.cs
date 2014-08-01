@@ -23,7 +23,6 @@ namespace MHD.Gameplay.UI.Panels
         private float scale = 1;
         private Gameplay.UI.HUD hud;
         private Gameplay.Objects.Player player;
-        private Gameplay.UI.Button testBtn;
         private float FPS = 0;
         private Matrix3x2 backgroundWorldTransform;
 
@@ -44,24 +43,6 @@ namespace MHD.Gameplay.UI.Panels
 
             hud = new Gameplay.UI.HUD();
             player = new Gameplay.Objects.Player();
-
-            testBtn = new Gameplay.UI.Button(
-                new Rectangle(200, 200, 100, 100),
-                (float)(-Math.PI / 16),
-                new Color[] { 
-                    Color.LightGray, 
-                    Color.Yellow, 
-                    Color.Orange 
-                },
-                "TEST",
-                new Content.ResourceManagers.Static.BasicTextFormat()
-                {
-                    Name = "Arial",
-                    Size = 20
-                },
-                Color.DimGray);
-            testBtn.Action += testBtn_Action;
-            gameObjects.Add(testBtn);
 
             level = new Content.Level.Level(System.IO.Path.Combine(System.Windows.Forms.Application.StartupPath, "Content\\Level\\Default\\level.dll"));
             gameObjects.AddRange(level.RunableObjects.Values);
@@ -106,8 +87,8 @@ namespace MHD.Gameplay.UI.Panels
 
         void testBtn_Action(Gameplay.UI.Button sender, Gameplay.UI.Button.ButtonEventArgs e)
         {
-           
-
+            if(e.Type == Button.ButtonEventType.Down)
+            System.Windows.Forms.MessageBox.Show("test");
         }
 
         #endregion
@@ -130,11 +111,10 @@ namespace MHD.Gameplay.UI.Panels
 
             #region Key handling
 
+            if (inputProvider.KeyboardState.IsPressed(Key.Escape) && !inputProvider.KeyboardStateOld.IsPressed(Key.Escape)) ParentGame.activePanel = ParentGame.panels["mainmenu"];
+
             if (inputProvider.KeyboardState.IsPressed(Key.Up)) scale += (float)timeSinceLastFrame.TotalMilliseconds * 0.001f;
             if (inputProvider.KeyboardState.IsPressed(Key.Down)) scale -= (float)timeSinceLastFrame.TotalMilliseconds * 0.001f;
-
-            if (inputProvider.KeyboardState.IsPressed(Key.F11) && !inputProvider.KeyboardStateOld.IsPressed(Key.F11)) ParentGame.ToggleFullscreen();
-            if (inputProvider.KeyboardState.IsPressed(Key.Escape) && !inputProvider.KeyboardStateOld.IsPressed(Key.Escape)) Environment.Exit(0);
 
             player.Update(totalGameTime, timeSinceLastFrame, inputProvider, ref viewTransform);
             hud.Update(totalGameTime, timeSinceLastFrame, inputProvider, ref viewTransform);

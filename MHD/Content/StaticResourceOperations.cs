@@ -76,10 +76,17 @@ namespace MHD.Content.ResourceManagers.Static
 
     }
 
-    class DefaultColors
+    namespace DefaultColors
     {
 
-        public static Color UIgreen = new Color(87, 255, 0, 255);
+        class UI
+        {
+
+            public static Color Text = new Color(87, 255, 0, 255);
+            public static Color Background = new Color(10, 30, 0, 255);
+            public static Color BackgroundHover = new Color(40, 60, 30, 255);
+
+        }
 
     }
 

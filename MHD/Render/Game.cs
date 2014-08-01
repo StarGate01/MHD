@@ -22,8 +22,8 @@ namespace MHD.Render
 
         private Input.InputProvider inputProvider;
         public Matrix3x2 viewTransform = Matrix3x2.Identity;
-        private Dictionary<string, Gameplay.UI.Panel> panels = new Dictionary<string, Gameplay.UI.Panel>();
-        private Gameplay.UI.Panel activePanel;
+        public Dictionary<string, Gameplay.UI.Panel> panels = new Dictionary<string, Gameplay.UI.Panel>();
+        public Gameplay.UI.Panel activePanel;
         private Gameplay.UI.Cursor cursor;
 
         #endregion
@@ -36,8 +36,9 @@ namespace MHD.Render
             cursor = new Gameplay.UI.Cursor();
             cursor.Initialize();
             panels.Add("game", new Gameplay.UI.Panels.GamePanel(this));
+            panels.Add("mainmenu", new Gameplay.UI.Panels.MainMenuPanel(this));
             panels.Values.ToList().ForEach(el => el.Initialize());
-            activePanel = panels["game"];
+            activePanel = panels["mainmenu"];
             base.Initialize();
         }
 

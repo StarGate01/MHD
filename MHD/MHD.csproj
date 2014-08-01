@@ -47,7 +47,9 @@
     <Compile Include="Content\Level\LevelScript.cs" />
     <Compile Include="Content\ResourceManagers.cs" />
     <Compile Include="Content\StaticResourceOperations.cs" />
+    <Compile Include="Gameplay\UI\Label.cs" />
     <Compile Include="Gameplay\UI\Panel.cs" />
+    <Compile Include="Gameplay\UI\Panels\MainMenuPanel.cs" />
     <Compile Include="Gameplay\UI\Panels\GamePanel.cs" />
     <Compile Include="Geometry\Entity.cs" />
     <Compile Include="Gameplay\Objects\GameObject.cs" />

@@ -19,7 +19,7 @@ namespace MHD.Gameplay.UI
     public class HUD : Geometry.Entity
     {
 
-        private String[] centerStrings = new String[4];
+        private String[] centerStrings = new String[4] { "", "", "", "" };
 
         public String[] CenterStrings
         {
@@ -69,7 +69,7 @@ namespace MHD.Gameplay.UI
         public override void Initialize()
         {
             ContentManager.Add("text_inner", new Content.ResourceManagers.Static.BasicTextFormat() { Name = "Courier New", Size = 10, FontWeight = FontWeight.Light }, Content.ContentManager.DefaultResourceManagers.BasicTextFormatToTextFormat);
-            ContentManager.Add("color", DefaultColors.UIgreen, Content.ContentManager.DefaultResourceManagers.ColorToSolidColorBrush);
+            ContentManager.Add("color", DefaultColors.UI.Text, Content.ContentManager.DefaultResourceManagers.ColorToSolidColorBrush);
             base.Initialize();
         }
 

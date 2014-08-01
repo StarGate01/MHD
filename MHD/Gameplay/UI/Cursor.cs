@@ -98,7 +98,7 @@ namespace MHD.Gameplay.UI
 
         public override void Initialize()
         {
-            ContentManager.Add("color", DefaultColors.UIgreen, Content.ContentManager.DefaultResourceManagers.ColorToSolidColorBrush);
+            ContentManager.Add("color", DefaultColors.UI.Text, Content.ContentManager.DefaultResourceManagers.ColorToSolidColorBrush);
             base.Initialize();
         }
 

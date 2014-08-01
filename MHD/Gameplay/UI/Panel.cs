@@ -14,7 +14,7 @@ using SharpDX.DirectWrite;
 
 namespace MHD.Gameplay.UI
 {
-    class Panel : Content.IResourceusing, Render.IRenderable
+    public class Panel : Content.IResourceusing, Render.IRenderable
     {
 
         #region Attributes
@@ -68,6 +68,7 @@ namespace MHD.Gameplay.UI
 
         public virtual void Update(TimeSpan totalGameTime, TimeSpan timeSinceLastFrame, Input.InputProvider inputProvider, ref Matrix3x2 viewTransform)
         {
+            if (inputProvider.KeyboardState.IsPressed(Key.F11) && !inputProvider.KeyboardStateOld.IsPressed(Key.F11)) ParentGame.ToggleFullscreen();
             foreach (Geometry.Entity obj in gameObjects)
             {
                 obj.Update(totalGameTime, timeSinceLastFrame, inputProvider, ref viewTransform);
