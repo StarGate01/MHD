@@ -98,6 +98,9 @@
     <Content Include="Content\Image\background.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\Image\background_dark.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Image\menu.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

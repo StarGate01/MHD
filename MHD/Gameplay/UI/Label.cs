@@ -46,8 +46,8 @@ namespace MHD.Gameplay.UI
         {
         }
 
-        public Label(Rectangle bounds, float rotation, string text)
-            : this(bounds, rotation, null, 0, text, null, new Color())
+        public Label(Rectangle bounds, float rotation, string text, float textSize)
+            : this(bounds, rotation, null, 0, text, new Content.ResourceManagers.Static.BasicTextFormat() { Size = textSize }, new Color())
         {
         }
 
@@ -77,7 +77,7 @@ namespace MHD.Gameplay.UI
                 textFormat = new Content.ResourceManagers.Static.BasicTextFormat()
                 {
                     Name = "Courier New",
-                    Size = 20
+                    Size = etextFormat.Size
                 };
             }
         }

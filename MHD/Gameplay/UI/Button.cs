@@ -82,8 +82,8 @@ namespace MHD.Gameplay.UI
         {
         }
 
-        public Button(Rectangle bounds, float rotation, string text)
-            : this(bounds, rotation, null, 0, text, null, new Color())
+        public Button(Rectangle bounds, float rotation, string text, float textSize)
+            : this(bounds, rotation, null, 0, text, new Content.ResourceManagers.Static.BasicTextFormat() { Size = textSize }, new Color())
         {
         }
 
@@ -117,7 +117,7 @@ namespace MHD.Gameplay.UI
                 textFormat = new Content.ResourceManagers.Static.BasicTextFormat()
                 {
                     Name = "Courier New",
-                    Size = 20
+                    Size = etextFormat.Size
                 };
             }
             state = stateOld = ButtonState.Nothing;
