@@ -41,11 +41,15 @@ namespace MHD.Gameplay.UI.Panels
             contentManager.Add("fps_textColor", Color.LightGray, Content.ContentManager.DefaultResourceManagers.ColorToSolidColorBrush);
             contentManager.Add("background_image", "Content\\Image\\background.png", Content.ContentManager.DefaultResourceManagers.StringToBitmapBrush);
 
-            hud = new Gameplay.UI.HUD();
-            player = new Gameplay.Objects.Player();
-
             level = new Content.Level.Level(System.IO.Path.Combine(System.Windows.Forms.Application.StartupPath, "Content\\Level\\Default\\level.dll"));
             gameObjects.AddRange(level.RunableObjects.Values);
+
+            hud = new Gameplay.UI.HUD();
+            player = new Gameplay.Objects.Player(
+                new Vector2(level.Data.Player.StartPosition.X, level.Data.Player.StartPosition.Y),
+                level.Data.Player.StartRotation,
+                level.Data.Player.StartEnergy
+            );
 
             player.Initialize();
             hud.Initialize();

@@ -30,10 +30,10 @@ namespace MHD.Content.Level.Data.Scrips
 
         public ObjectScript_{%UID%}(PathGeometry bounds, float rotation, MHD.Gameplay.Objects.GameObject.ColorInfo color): base(bounds, rotation, color) {}
 
-        public override void Update(TimeSpan totalGameTime, TimeSpan timeSinceLastFrame, MHD.Input.InputProvider inputProvider, ref Matrix3x2 worldTransform, ref Matrix3x2 viewTransform)
+        public override void Update(TimeSpan totalGameTime, TimeSpan timeSinceLastFrame, MHD.Input.InputProvider inputProvider, ref Matrix3x2 viewTransform)
         {
         
-            base.Update(totalGameTime, timeSinceLastFrame, inputProvider, ref worldTransform, ref viewTransform);
+            base.Update(totalGameTime, timeSinceLastFrame, inputProvider, ref viewTransform);
         }
 
         public override void Render(RenderTarget renderTarget2D, Matrix3x2 viewTransform)

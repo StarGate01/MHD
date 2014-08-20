@@ -23,6 +23,7 @@ namespace MHD.Gameplay.Objects
         private Rectangle nose;
         private float velocity;
         private float turningVelocity;
+        private float energy;
 
         #endregion
 
@@ -50,18 +51,25 @@ namespace MHD.Gameplay.Objects
             set { virtualRotation = value; }
         }
 
+        public float Energy
+        {
+            get { return energy; }
+            set { energy = value; }
+        }
+
         #endregion
 
-        public Player()
+        public Player(Vector2 initPosition, float initRotation, float initEnergy)
             : base(-(float)Math.PI / 2)
         {
             Rectangle baseRect = new Rectangle(0, 0, 50, 50);
             Bounds = Geometry.Static.Operations.RectangleToPath(ref baseRect, out translation);
-            virtualPosition = new Vector2(0, 0);
-            virtualRotation = (float)Math.PI / 2;
+            virtualPosition = initPosition;
+            virtualRotation = initRotation;
             velocity = 0;
             turningVelocity = 0;
             nose = new Rectangle(0, -5, 25, 10);
+            energy = initEnergy;
         }
 
         #region Gameloop

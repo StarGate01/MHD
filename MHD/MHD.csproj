@@ -40,6 +40,7 @@
     <None Include="app.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api\Environment.cs" />
     <Compile Include="Content\ContentManager.cs" />
     <Compile Include="Content\IResourceusing.cs" />
     <Compile Include="Content\Level\Level.cs" />
